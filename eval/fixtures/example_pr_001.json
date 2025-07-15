@@ -1,0 +1,17 @@
+{
+  "pr_id": "fastapi_pr_12345",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 12345,
+  "pr_title": "Fix SQL injection in query builder",
+  "diff": "diff --git a/app/db.py b/app/db.py\n--- a/app/db.py\n+++ b/app/db.py\n@@ -10,3 +10,4 @@\n def query(user_input):\n-    return db.execute(f\"SELECT * FROM users WHERE name = '{user_input}'\")\n+    return db.execute(\"SELECT * FROM users WHERE name = %s\", (user_input,))\n",
+  "expected_comments": [
+    {
+      "file": "app/db.py",
+      "line": 12,
+      "category": "security",
+      "severity": "critical",
+      "description": "SQL injection vulnerability — user input directly interpolated into query string"
+    }
+  ],
+  "expected_no_comments": []
+}
