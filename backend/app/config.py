@@ -20,6 +20,8 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     default_model: str = "claude-sonnet-4-20250514"
     fallback_model: str = "gpt-4o"
+    # When True, never calls external LLM APIs (CI / local without keys).
+    llm_mock_mode: bool = False
 
     # Cost guard
     daily_token_budget: int = 100_000

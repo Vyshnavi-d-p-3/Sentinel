@@ -8,7 +8,7 @@ Three-layer protection:
 """
 
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from collections import deque
 
 

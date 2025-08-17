@@ -4,11 +4,13 @@ FastAPI application entry point.
 """
 
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 from app.config import settings
-from app.core.database import engine
+from app.core.database import async_session, engine
 from app.routers import webhook, reviews, eval_router, costs, prompts
 
 
@@ -42,8 +44,23 @@ app.include_router(prompts.router, prefix="/api/v1/prompts", tags=["prompts"])
 
 @app.get("/health")
 async def health_check():
+    db_status = "ok"
+    try:
+        async with async_session() as session:
+            await session.execute(text("SELECT 1"))
+    except Exception:
+        db_status = "unavailable"
+    llm_live = bool(
+        not settings.llm_mock_mode
+        and (
+            settings.anthropic_api_key.strip() or settings.openai_api_key.strip()
+        )
+    )
     return {
-        "status": "healthy",
+        "status": "healthy" if db_status == "ok" else "degraded",
         "version": "0.1.0",
-        "checks": {"database": "ok", "llm_gateway": "ok", "embedding_index": "ok"},
+        "checks": {
+            "database": db_status,
+            "llm_gateway": "live" if llm_live else "mock",
+        },
     }

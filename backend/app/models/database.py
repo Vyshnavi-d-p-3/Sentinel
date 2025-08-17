@@ -4,8 +4,8 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
-    Boolean, Column, DateTime, Float, Integer, String, Text,
-    ForeignKey, BigInteger, UniqueConstraint, Index,
+    Boolean, Column, DateTime, Float, Integer, Text,
+    ForeignKey, BigInteger, UniqueConstraint,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
@@ -124,5 +124,5 @@ class RepoEmbedding(Base):
     chunk_text = Column(Text, nullable=False)
     start_line = Column(Integer)
     end_line = Column(Integer)
-    embedding = Column(Vector(1536))
+    embedding: Vector = Column(Vector(1536))
     updated_at = Column(DateTime, default=datetime.utcnow)

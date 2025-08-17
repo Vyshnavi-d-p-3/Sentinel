@@ -150,8 +150,9 @@ class DiffParser:
 
         functions = []
         for i, line in enumerate(content.splitlines(), 1):
-            if pattern.match(line):
-                name = pattern.match(line).group(2) or pattern.match(line).group(1)
+            m = pattern.match(line)
+            if m:
+                name = m.group(2) or m.group(1)
                 functions.append(ChangedFunction(
                     name=name, file_path=file_path,
                     start_line=i, end_line=i, content=line.strip(),

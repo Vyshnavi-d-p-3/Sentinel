@@ -1,7 +1,6 @@
 """Tests for CostGuard — budget enforcement and circuit breaker."""
 
 import pytest
-import time
 from app.services.cost_guard import CostGuard, CostGuardConfig
 
 

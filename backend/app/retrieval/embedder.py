@@ -6,7 +6,6 @@ embeddings via OpenAI text-embedding-3-small, and upserts to pgvector.
 """
 
 import logging
-from app.config import settings
 
 logger = logging.getLogger(__name__)
 
