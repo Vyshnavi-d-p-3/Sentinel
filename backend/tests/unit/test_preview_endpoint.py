@@ -11,7 +11,7 @@ SAMPLE_DIFF = """diff --git a/src/auth.py b/src/auth.py
 +++ b/src/auth.py
 @@ -10,3 +10,4 @@
  def login(user, password):
-+    # TODO: hash password
++    # placeholder: hash password in production
      return user"""
 
 

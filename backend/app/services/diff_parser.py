@@ -6,8 +6,8 @@ and import statements. Handles edge cases: binary files, renames, deletions,
 files with no newline at EOF.
 """
 
-from dataclasses import dataclass, field
 import re
+from dataclasses import dataclass, field
 
 
 @dataclass

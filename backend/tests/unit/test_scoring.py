@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "eval" / "scripts"))
 
-from scoring import EvalScorer, EvalComment
+from scoring import EvalComment, EvalScorer
 
 
 def test_perfect_match():

@@ -1,6 +1,7 @@
 """Tests for DiffParser — edge cases: binary files, renames, empty diffs."""
 
 import pytest
+
 from app.services.diff_parser import DiffParser
 
 

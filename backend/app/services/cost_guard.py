@@ -8,8 +8,8 @@ Three-layer protection:
 """
 
 import time
-from dataclasses import dataclass
 from collections import deque
+from dataclasses import dataclass
 
 
 @dataclass
