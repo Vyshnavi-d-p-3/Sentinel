@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Plain fallbacks — if Tailwind/watchers fail in dev, you still get a dark
+ * shell instead of browser-default Times serif. Tailwind utilities override.
+ */
+html,
+body {
+  background-color: #0b0d10;
+  color: #e6e9ef;
+  font-family:
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Accessible focus — consistent with Tailwind accent */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Minimal scrollbar styling so dark panels don't show a light track. */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2a2f38;
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
