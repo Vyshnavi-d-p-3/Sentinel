@@ -56,6 +56,8 @@ class Settings(BaseSettings):
     # Observability
     langfuse_public_key: str = ""
     langfuse_secret_key: str = ""
+    # Empty → SDK default (https://cloud.langfuse.com) or LANGFUSE_HOST env.
+    langfuse_host: str = ""
 
     # CORS
     cors_origins: list[str] = ["http://localhost:3000"]

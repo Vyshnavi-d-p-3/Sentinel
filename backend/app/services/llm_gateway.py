@@ -25,6 +25,7 @@ from app.models.review_output import (
     ReviewSynthesis,
     TriageReport,
 )
+from app.observability.langfuse_client import get_langfuse
 from app.services.mock_label_anchor import category_severity_for_anchor
 
 logger = logging.getLogger(__name__)
@@ -41,6 +42,29 @@ class LLMGatewayError(Exception):
 # diff that would blow our token budget and provider limits in one shot.
 _MAX_SYSTEM_PROMPT_CHARS = 32_000
 _MAX_USER_PROMPT_CHARS = 200_000
+
+# Cap payload size sent to Langfuse (traces are for debugging, not full prompt archive).
+_LANGFUSE_IO_MAX_CHARS = 24_000
+
+
+def _usage_from_est_tokens(total_est: int):
+    from langfuse.model import ModelUsage
+
+    total_est = max(1, int(total_est))
+    input_t = max(1, int(total_est * 0.55))
+    output_t = max(1, total_est - input_t)
+    return ModelUsage(
+        input=input_t,
+        output=output_t,
+        total=input_t + output_t,
+        unit="TOKENS",
+    )
+
+
+def _clip_for_langfuse(text: str) -> str:
+    if len(text) <= _LANGFUSE_IO_MAX_CHARS:
+        return text
+    return text[:_LANGFUSE_IO_MAX_CHARS] + "\n…[truncated]"
 
 
 class LLMGateway:
@@ -87,7 +111,35 @@ class LLMGateway:
         if self._use_mock():
             raw = self._mock_json_response(user_prompt, output_schema)
             est = max(1, len(system_prompt) // 4 + len(user_prompt) // 4 + len(raw) // 4)
-            return self._parse_response(raw, output_schema), est, "mock"
+            parsed = self._parse_response(raw, output_schema)
+            self._langfuse_finish_mock(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                output_schema=output_schema,
+                raw_output=raw,
+                est_tokens=est,
+                temperature=temperature,
+            )
+            return parsed, est, "mock"
+
+        lf = get_langfuse()
+        gen = None
+        if lf:
+            try:
+                gen = lf.generation(
+                    name="llm.generate",
+                    model=self._primary_model,
+                    model_parameters={
+                        "temperature": temperature,
+                        "schema": output_schema.__name__,
+                    },
+                    input=[
+                        {"role": "system", "content": _clip_for_langfuse(system_prompt)},
+                        {"role": "user", "content": _clip_for_langfuse(user_prompt)},
+                    ],
+                )
+            except Exception as e:
+                logger.warning("Langfuse generation start failed: %s", e)
 
         last_err: Exception | None = None
         for attempt in range(self.MAX_RETRIES):
@@ -97,7 +149,14 @@ class LLMGateway:
                     timeout=self._timeout,
                 )
                 est = max(1, len(system_prompt) // 4 + len(user_prompt) // 4 + len(raw) // 4)
-                return self._parse_response(raw, output_schema), est, self._primary_model
+                parsed = self._parse_response(raw, output_schema)
+                self._langfuse_end_success(
+                    gen,
+                    raw_output=raw,
+                    est_tokens=est,
+                    model_id=self._primary_model,
+                )
+                return parsed, est, self._primary_model
             except TimeoutError as e:
                 last_err = e
                 logger.warning("Primary LLM attempt %s timed out after %ss", attempt + 1, self._timeout)
@@ -111,9 +170,76 @@ class LLMGateway:
                 timeout=self._timeout,
             )
             est = max(1, len(system_prompt) // 4 + len(user_prompt) // 4 + len(raw) // 4)
-            return self._parse_response(raw, output_schema), est, self._fallback_model
+            parsed = self._parse_response(raw, output_schema)
+            self._langfuse_end_success(
+                gen,
+                raw_output=raw,
+                est_tokens=est,
+                model_id=self._fallback_model,
+            )
+            return parsed, est, self._fallback_model
         except Exception as e:
+            self._langfuse_end_error(gen, e)
             raise LLMGatewayError(f"All providers failed: {e}") from (last_err or e)
+
+    def _langfuse_finish_mock(
+        self,
+        *,
+        system_prompt: str,
+        user_prompt: str,
+        output_schema: type[T],
+        raw_output: str,
+        est_tokens: int,
+        temperature: float,
+    ) -> None:
+        """Log deterministic mock invocations when Langfuse keys are configured."""
+        lf = get_langfuse()
+        if not lf:
+            return
+        try:
+            g = lf.generation(
+                name="llm.generate",
+                model="mock",
+                model_parameters={"temperature": temperature, "schema": output_schema.__name__},
+                input=[
+                    {"role": "system", "content": _clip_for_langfuse(system_prompt)},
+                    {"role": "user", "content": _clip_for_langfuse(user_prompt)},
+                ],
+            )
+            g.end(
+                output=_clip_for_langfuse(raw_output),
+                usage=_usage_from_est_tokens(est_tokens),
+            )
+        except Exception:  # noqa: S110 — observability must not break the pipeline
+            logger.debug("Langfuse mock generation log failed", exc_info=True)
+
+    def _langfuse_end_success(
+        self,
+        gen: object | None,
+        *,
+        raw_output: str,
+        est_tokens: int,
+        model_id: str,
+    ) -> None:
+        if gen is None:
+            return
+        try:
+            gen.end(  # type: ignore[union-attr]
+                output=_clip_for_langfuse(raw_output),
+                usage=_usage_from_est_tokens(est_tokens),
+                model=model_id,
+            )
+        except Exception:  # noqa: S110
+            logger.debug("Langfuse success end() failed", exc_info=True)
+
+    def _langfuse_end_error(self, gen: object | None, err: Exception) -> None:
+        if gen is None:
+            return
+        try:
+            msg = f"{type(err).__name__}: {err}"[:2_000]
+            gen.end(level="ERROR", status_message=msg)  # type: ignore[union-attr]
+        except Exception:  # noqa: S110
+            logger.debug("Langfuse error end() failed", exc_info=True)
 
     async def _call_primary(self, system: str, user: str, temp: float) -> str:
         import anthropic

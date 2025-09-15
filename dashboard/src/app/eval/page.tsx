@@ -78,8 +78,6 @@ export default function EvalPage() {
   );
 
   if (runs.isLoading && latest.isLoading) return <LoadingBar />;
-  if (runs.isError)
-    return <ErrorPanel error={runs.error} />;
 
   return (
     <div className="space-y-6">
@@ -92,6 +90,10 @@ export default function EvalPage() {
         </p>
       </header>
 
+      {runs.isError && <ErrorPanel error={runs.error} />}
+
+      {!runs.isError && (
+        <>
       <EvalTriggerPanel />
 
       {!hasLatest ? (
@@ -322,6 +324,8 @@ export default function EvalPage() {
           </table>
         )}
       </section>
+        </>
+      )}
     </div>
   );
 }

@@ -15,7 +15,9 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "start:ci": "next start -H 127.0.0.1 -p 3005",
+    "lh:advisory": "lighthouse http://127.0.0.1:3005/ --only-categories=accessibility,performance --preset=desktop --chrome-flags=\"--headless --no-sandbox\" --quiet"
   },
   "dependencies": {
     "next": "14.2.15",

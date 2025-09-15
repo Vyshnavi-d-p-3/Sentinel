@@ -10,7 +10,20 @@ export default function SettingsPage() {
   const { data, isLoading, isError, error } = useConfig();
 
   if (isLoading) return <LoadingBar />;
-  if (isError) return <ErrorPanel error={error} />;
+  if (isError) {
+    return (
+      <div className="space-y-6">
+        <header className="space-y-1">
+          <h1 className="text-2xl font-semibold">Settings</h1>
+          <p className="text-sm text-muted">
+            Effective runtime configuration loaded from environment variables. Secrets
+            are never surfaced — only whether they&apos;re configured.
+          </p>
+        </header>
+        <ErrorPanel error={error} />
+      </div>
+    );
+  }
   if (!data) return null;
 
   return (

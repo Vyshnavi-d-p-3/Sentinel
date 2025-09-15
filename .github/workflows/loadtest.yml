@@ -1,0 +1,84 @@
+# Headless Locust against FastAPI + Postgres. Runs on main when load code changes,
+# or manually — kept out of the default PR path to save minutes.
+
+name: Load test (webhook)
+
+on:
+  workflow_dispatch:
+  # Optional: enable after validating on your fork
+  # push:
+  #   branches: [main]
+  #   paths: [ "backend/**", "loadtests/**", ".github/workflows/loadtest.yml" ]
+
+concurrency:
+  group: loadtest-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  locust:
+    name: Locust webhook (smoke)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: sentinel
+          POSTGRES_PASSWORD: sentinel
+          POSTGRES_DB: sentinel
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install backend + locust
+        run: |
+          python -m pip install -U pip
+          python -m pip install -r backend/requirements.txt
+          python -m pip install -r loadtests/requirements.txt
+
+      - name: Start static diff server
+        run: nohup python3 -m http.server 9999 --directory loadtests > /tmp/http-static.log 2>&1 &
+
+      - name: Start API
+        working-directory: backend
+        run: |
+          nohup env \
+            DATABASE_URL=postgresql+asyncpg://sentinel:sentinel@localhost:5432/sentinel \
+            DB_AUTO_CREATE_TABLES=true \
+            GITHUB_WEBHOOK_SECRET=ci-loadtest-secret \
+            RATE_LIMIT_WEBHOOK=50000/minute \
+            LLM_MOCK_MODE=true \
+            python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 \
+            > /tmp/uvicorn.log 2>&1 &
+
+      - name: Wait for livez
+        run: |
+          for i in $(seq 1 60); do
+            if curl -fsS "http://127.0.0.1:8000/livez" >/dev/null 2>&1; then
+              echo "API ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "--- uvicorn log ---"
+          cat /tmp/uvicorn.log || true
+          exit 1
+
+      - name: Run locust
+        working-directory: loadtests
+        env:
+          GITHUB_WEBHOOK_SECRET: ci-loadtest-secret
+          DIFF_FETCH_URL: http://127.0.0.1:9999/static_pr.diff
+        run: |
+          locust -f locustfile.py --headless -u 15 -r 3 -t 45s --host http://127.0.0.1:8000

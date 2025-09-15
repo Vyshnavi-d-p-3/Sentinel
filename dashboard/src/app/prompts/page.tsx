@@ -21,11 +21,25 @@ export default function PromptsPage() {
   }, [list.data, selected]);
 
   if (list.isLoading) return <LoadingBar />;
-  if (list.isError) return <ErrorPanel error={list.error} />;
-  if (!list.data) return null;
+  if (!list.data && !list.isError) return null;
+  if (list.isError) {
+    return (
+      <div className="space-y-6">
+        <header className="space-y-1">
+          <h1 className="text-2xl font-semibold">Prompts</h1>
+          <p className="text-sm text-muted">
+            Versioned review-pipeline prompts. Every persisted review pins the exact
+            hash that generated it — flip the active version here, and the diff view
+            shows what changed.
+          </p>
+        </header>
+        <ErrorPanel error={list.error} />
+      </div>
+    );
+  }
 
-  const prompts = list.data.prompts;
-  const activeHash = list.data.active?.hash ?? null;
+  const prompts = list.data!.prompts;
+  const activeHash = list.data!.active?.hash ?? null;
 
   return (
     <div className="space-y-6">
