@@ -126,7 +126,7 @@ PR Diff
 | Auth           | HMAC (webhooks), API key (dashboard)| Wire-level auth without sessions         |
 | Rate limiting  | slowapi                             | Per-IP fixed-window limits               |
 | Frontend       | Next.js 14 (App Router, standalone) | Dashboard SPA                            |
-| UI             | Tailwind CSS + shadcn/ui            | Component library                        |
+| UI             | Tailwind + shadcn-style primitives  | `Button`, `cn()`; add more via [`components.json`](dashboard/components.json) — see [`docs/PROPOSAL_STATUS.md`](docs/PROPOSAL_STATUS.md) |
 | Charts         | Recharts                            | F1 trend visualizations                  |
 | LLM            | Claude Sonnet / GPT-4o              | Review generation                        |
 | Observability  | Langfuse + structured JSON logs     | Token tracking, request correlation      |

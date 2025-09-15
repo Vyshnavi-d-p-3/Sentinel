@@ -1,21 +1,60 @@
 # Build document vs implementation (status)
 
-Tracking the *Sentinel — Complete Build Document* against the repository.
+Tracking the *Sentinel — Complete Build Document* (PDF) against this repository. Use this table in interviews: say what shipped, what is partial, and what lives outside git.
 
-| Area | Spec | Status |
-|------|------|--------|
-| Core stack (FastAPI, Next 14, Postgres + pgvector, eval harness) | Yes | Shipped |
-| Embeddings | Doc example: 1536-d OpenAI | **1024-d Voyage** — intentional |
-| `GET/ PATCH /api/v1/repos` | List + per-repo settings | **Implemented** |
-| 100-PR eval dataset | 100 (min 50) | **100 × `synth_pr_*.json`** (mock‑aligned for CI); **hand examples** in `eval/fixtures/legacy/` |
-| Playwright E2E | Core flows | **Home smoke** — `dashboard/e2e/` |
-| Locust load tests | 50 concurrent webhooks | **In-repo** — [`loadtests/`](../loadtests/) (manual / staging; not in CI) |
-| Public deploy (Railway/Fly + Vercel + Neon) | Yes | **Documented** — [`DEPLOY.md`](DEPLOY.md) |
-| Blog + Loom + public App install | Yes | **Drafts** — [`BLOG_DRAFT.md`](BLOG_DRAFT.md), [`VIDEO_OUTLINE.md`](VIDEO_OUTLINE.md); install = follow `DEPLOY.md` + GitHub App |
+## Tech stack (PDF page 1)
 
-Success metrics (F1, latency, cost) under **real** LLM keys are for you to measure after deploy. The default **mock**+synthetic bundle reports high strict F1 by **construction** (labels aligned to the mock); that does **not** generalize to real traffic until you run a **separate** labeled eval (see [`PUBLISHING_AND_BENCHMARK.md`](PUBLISHING_AND_BENCHMARK.md)).
+| Layer | PDF | Repo |
+|------|-----|------|
+| Frontend | Next.js 14 App Router | **Yes** — `dashboard/` |
+| UI | Tailwind + **shadcn/ui** | **Partial** — Tailwind + **shadcn-pattern** `Button` (`dashboard/src/components/ui/button.tsx`), `cn()` (`dashboard/src/lib/utils.ts`), `components.json`. Add more primitives with `npx shadcn@latest add …` as needed. |
+| Data | TanStack Query v5 | **Yes** — `dashboard/src/hooks/` |
+| Charts | Recharts 2.x | **Yes** — e.g. `dashboard/src/app/eval/page.tsx`, costs |
+| Backend | FastAPI 0.110+, Pydantic v2 | **Yes** — `backend/app/` |
+| DB | Postgres 16 + pgvector + tsvector | **Yes** — SQLAlchemy models + migrations |
+| LLM | Claude / GPT-4o + fallback | **Yes** — `backend/app/services/llm_gateway.py` |
+| Observability | Langfuse | **Yes** — generations logged when keys set; `langfuse_host` optional |
+| Eval | Custom harness, P/R/F1, CI gate | **Yes** — `eval/scripts/`, `.github/workflows/eval.yml` |
+| CI | GitHub Actions lint/test/eval | **Yes** — `ci.yml`, `eval.yml`, `dashboard.yml`, optional `loadtest.yml` |
+| Deploy | Railway/Fly + Vercel + Neon | **Doc** — [`DEPLOY.md`](DEPLOY.md) |
 
-| Outside-repo work | Doc |
-|--------------------|-----|
+## Architecture (PDF page 2)
+
+| Block | Status |
+|-------|--------|
+| Webhook → orchestrator → GitHub client | **Yes** |
+| Hybrid retriever (BM25 + dense + RRF) | **Yes** — `backend/app/retrieval/` |
+| Cost guard | **Yes** |
+| LLM gateway (retry, timeout, JSON, Langfuse) | **Yes** |
+| Dashboard API + Next routes | **Yes** |
+
+## PDF phases / deliverables (condensed)
+
+| Area | Spec hint | Status |
+|------|------------|--------|
+| 100-PR dataset | Hand-labeled JSON fixtures | **100 × synthetic** `eval/fixtures/synth_pr_*.json` (mock-aligned CI); **legacy** hand examples under `eval/fixtures/legacy/` |
+| Eval gate | F1 drop vs baseline in CI | **Yes** |
+| `GET /eval/compare` | Prompt comparison | **Yes** — backend + dashboard hooks |
+| Playwright | Core E2E | **Expanded** — `dashboard/e2e/routes.spec.ts` + smoke; mocked eval/reviews flows |
+| Locust | ~50 concurrent webhooks | **In-repo** [`loadtests/`](../loadtests/); **workflow** `.github/workflows/loadtest.yml` (`workflow_dispatch`) |
+| Lighthouse | Score targets in PDF | **Advisory** step on dashboard workflow (not a hard gate) |
+| Structured logging / correlation ID | PDF week 7 | **Partial** — request middleware; tune to your ops stack |
+| Health | `/health` + components | **Yes** — `/health`, `/livez`, `/readyz` |
+| Ship week 8 | Live URLs, video, blog, HN | **Outside repo** — [`PUBLISHING_AND_BENCHMARK.md`](PUBLISHING_AND_BENCHMARK.md), [`DEPLOY.md`](DEPLOY.md), drafts in `docs/` |
+
+## Success metrics (PDF page 12)
+
+Honest reporting beats inflated F1. Targets are **aspirational** until you run a **real** labeled eval (not the default mock-aligned bundle).
+
+| Metric | PDF target | Notes |
+|--------|------------|--------|
+| Security / bug F1 | Thresholds in PDF | Measure with **your** labels + `eval_runner.py` |
+| Latency / cost | PDF caps | Observable via API + costs pages |
+| Lighthouse | >90 aspirational | Run `npm run lh:advisory` locally; CI step is advisory |
+
+## Outside-repo work
+
+| Work | Doc |
+|------|-----|
 | Deploy, blog, video, hand-labeled benchmark | [`PUBLISHING_AND_BENCHMARK.md`](PUBLISHING_AND_BENCHMARK.md) |
-| Infra reference | [`DEPLOY.md`](DEPLOY.md) |
+| Infra | [`DEPLOY.md`](DEPLOY.md) |

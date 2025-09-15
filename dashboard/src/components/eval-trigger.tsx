@@ -5,7 +5,7 @@ import { ErrorPanel } from "@/components/empty";
 import { useConfig } from "@/hooks/config";
 import { useEvalTrigger } from "@/hooks/eval";
 import { formatInt } from "@/lib/format";
-import clsx from "clsx";
+import { Button } from "@/components/ui/button";
 
 export function EvalTriggerPanel() {
   const config = useConfig();
@@ -26,8 +26,9 @@ export function EvalTriggerPanel() {
             <code className="rounded bg-panel2 px-1">EVAL_TRIGGER_ENABLED=true</code>.
           </p>
         </div>
-        <button
+        <Button
           type="button"
+          variant={enabled && !trigger.isPending ? "default" : "secondary"}
           disabled={config.isLoading || !enabled || trigger.isPending}
           title={
             !enabled
@@ -35,15 +36,10 @@ export function EvalTriggerPanel() {
               : "Run eval_runner.py with fixtures under eval/fixtures"
           }
           onClick={() => trigger.mutate()}
-          className={clsx(
-            "shrink-0 rounded px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-panel",
-            enabled && !trigger.isPending
-              ? "bg-accent text-[#0b0d10] hover:bg-accent/90"
-              : "cursor-not-allowed bg-panel2 text-muted opacity-70",
-          )}
+          className="shrink-0"
         >
           {trigger.isPending ? "Running eval…" : "Run eval now"}
-        </button>
+        </Button>
       </div>
 
       {harness && (
