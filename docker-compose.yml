@@ -1,33 +1,98 @@
-version: "3.9"
+# Sentinel — single-host dev / demo orchestration.
+#
+# Production deployments should swap this for a managed Postgres (Neon,
+# Supabase, RDS) and run the backend + dashboard on a container platform
+# (Railway, Fly, ECS) — but this file boots the full stack locally with one
+# command and is what CI smoke-tests against.
 
 services:
   db:
     image: pgvector/pgvector:pg16
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: sentinel
-      POSTGRES_PASSWORD: sentinel
-      POSTGRES_DB: sentinel
+      POSTGRES_USER: ${POSTGRES_USER:-sentinel}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-sentinel}
+      POSTGRES_DB: ${POSTGRES_DB:-sentinel}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U sentinel"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sentinel} -d ${POSTGRES_DB:-sentinel}"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 5s
+    # The DB never needs outbound internet — keep it on an internal network
+    # so a compromised app container can't pivot through it.
+    networks:
+      - internal
 
   backend:
-    build: ./backend
-    ports:
-      - "8000:8000"
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql+asyncpg://sentinel:sentinel@db:5432/sentinel
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://sentinel:sentinel@db:5432/sentinel}
+      ENVIRONMENT: ${ENVIRONMENT:-development}
+      LLM_MOCK_MODE: ${LLM_MOCK_MODE:-true}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GITHUB_APP_ID: ${GITHUB_APP_ID:-}
+      GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
+      API_KEY: ${API_KEY:-}
+      CORS_ORIGINS: '["http://localhost:3000"]'
+      SENTINEL_LOG_FORMAT: ${SENTINEL_LOG_FORMAT:-json}
+      SENTINEL_LOG_LEVEL: ${SENTINEL_LOG_LEVEL:-INFO}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
     depends_on:
       db:
         condition: service_healthy
-    volumes:
-      - ./backend:/app
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/livez"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    networks:
+      - internal
+      - public
+    # Sensible defaults for a single-host demo. Production should set explicit
+    # CPU + memory limits via the orchestrator (Kubernetes / ECS).
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://backend:8000}
+      NODE_ENV: production
+    ports:
+      - "${DASHBOARD_PORT:-3000}:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:3000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - public
 
 volumes:
   pgdata:
+
+networks:
+  internal:
+    driver: bridge
+  public:
+    driver: bridge

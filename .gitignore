@@ -13,6 +13,8 @@ node_modules/
 
 # Environment
 .env
+.env.*
+!.env.example
 *.pem
 
 # IDE
@@ -26,3 +28,19 @@ Thumbs.db
 
 # Database
 pgdata/
+
+# Test / coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage/
+
+# Eval artifacts (keep fixtures, drop runtime outputs)
+eval/results.json
+eval/ablation_results.json
+eval/runs/
+
+# Logs
+*.log

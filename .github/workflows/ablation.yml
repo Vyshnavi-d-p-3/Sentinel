@@ -1,4 +1,4 @@
-name: Eval Regression Gate
+name: Retrieval Ablation
 
 on:
   push:
@@ -17,9 +17,14 @@ on:
       - "backend/app/prompts/**"
       - "backend/app/models/review_output.py"
       - "eval/**"
+  workflow_dispatch:
+
+# The ablation is an observational run — it never blocks merges, but it uploads
+# a JSON artifact and prints a human-readable F1 delta table so reviewers can
+# spot drift in how retrieval context changes the pipeline's outputs.
 
 jobs:
-  eval:
+  ablation:
     runs-on: ubuntu-latest
     env:
       LLM_MOCK_MODE: "true"
@@ -34,23 +39,18 @@ jobs:
         working-directory: backend
         run: pip install -r requirements.txt
 
-      - name: Validate fixture schema
+      - name: Validate fixture schema (incl. optional context_files)
         run: python eval/scripts/consistency_check.py --fixtures eval/fixtures
 
-      - name: Run evaluation harness with regression gate
+      - name: Run retrieval ablation
         run: |
-          python eval/scripts/eval_runner.py \
+          python eval/scripts/ablation.py \
             --fixtures eval/fixtures \
-            --baseline eval/baselines/baseline.json \
-            --output eval/results.json \
-            --threshold 0.05 \
-            --gate
+            --output eval/ablation_results.json
 
-      - name: Upload eval results
+      - name: Upload ablation report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: eval-results
-          path: |
-            eval/results.json
-            eval/baselines/baseline.json
+          name: ablation-results
+          path: eval/ablation_results.json

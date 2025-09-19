@@ -1,0 +1,17 @@
+{
+  "pr_id": "express_pr_33003",
+  "repo": "expressjs/express",
+  "pr_number": 33003,
+  "pr_title": "Refactor request batching loop",
+  "diff": "diff --git a/lib/batcher.js b/lib/batcher.js\n--- a/lib/batcher.js\n+++ b/lib/batcher.js\n@@ -14,7 +14,9 @@\n function batch(requests) {\n   const results = [];\n-  for (let i = 0; i < requests.length; i++) {\n-    results.push(handle(requests[i]));\n+  for (let i = 0; i <= requests.length; i++) {\n+    const r = requests[i];\n+    results.push(handle(r));\n   }\n   return results;\n }\n",
+  "expected_comments": [
+    {
+      "file": "lib/batcher.js",
+      "line": 17,
+      "category": "bug",
+      "severity": "high",
+      "description": "Off-by-one: loop uses <= length and will pass undefined to handle on the last iteration."
+    }
+  ],
+  "expected_no_comments": []
+}

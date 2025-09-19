@@ -1,0 +1,10 @@
+{
+  "pr_id": "fastapi_pr_22002",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 22002,
+  "pr_title": "Add docstring to query helper",
+  "diff": "diff --git a/app/db.py b/app/db.py\n--- a/app/db.py\n+++ b/app/db.py\n@@ -8,6 +8,9 @@\n def query(user_input):\n+    \"\"\"Run a parameterized lookup against the users table.\n+\n+    Returns the matching rows or an empty list when none match.\n+    \"\"\"\n     return db.execute(\"SELECT * FROM users WHERE name = %s\", (user_input,))\n",
+  "clean_pr": true,
+  "expected_comments": [],
+  "expected_no_comments": []
+}
