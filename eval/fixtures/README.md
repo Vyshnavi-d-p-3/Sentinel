@@ -24,8 +24,10 @@ For **non-synthetic** benchmarks, add or replace fixtures using
 
 ## Adding a fixture
 
-1. Copy `example_pr_001.json` as a template.  
+1. Copy a template from [`legacy/`](legacy/) (e.g. `example_pr_001.json`) or from any `synth_pr_*.json` for structure.  
 2. Use real unified diff text; avoid synthetic empty hunks.  
 3. Re-run:  
    `python eval/scripts/eval_runner.py --fixtures eval/fixtures/ --output eval/results.json`  
 4. Update `dataset_version` in `eval_runs` / baseline when the set materially changes.
+
+See also [`../README.md`](../README.md) for the full eval layout and [`../../docs/PUBLISHING_AND_BENCHMARK.md`](../../docs/PUBLISHING_AND_BENCHMARK.md) for publishing methodology.

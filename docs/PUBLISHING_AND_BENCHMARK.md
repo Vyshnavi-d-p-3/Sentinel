@@ -2,6 +2,10 @@
 
 The codebase ships pipelines, a dashboard, and an eval harness. The items below require **operator time**, **cloud accounts**, or **curation**—they are not incomplete features in the source tree; they are **deliverables you produce** using the repo as the engine.
 
+## 0. Repository map
+
+- **Eval harness index:** [`eval/README.md`](../eval/README.md) (runner, fixtures, baseline).
+
 ## 1. Production deploy
 
 - **Reference:** [`DEPLOY.md`](DEPLOY.md) (Postgres + pgvector, FastAPI container, Vercel dashboard, GitHub App wiring).

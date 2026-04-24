@@ -20,10 +20,12 @@ concerns.
 - `/` — home: health + KPI tiles + links into each subsection.
 - `/reviews` — paginated list of reviews with filters and a detail drawer.
 - `/reviews/[id]` — single review: summary, comments, pipeline telemetry.
-- `/eval` — latest baseline + per-category F1 (reads `/api/v1/eval`).
+- `/eval` — eval runs + per-category F1 (disk/DB); numbers may reflect **synthetic+mock** CI or separate **real-LLM** runs—see repo root **Evaluation** and `docs/PUBLISHING_AND_BENCHMARK.md`.
 - `/costs` — daily spend and model/provider mix (reads `/api/v1/costs`).
 - `/prompts` — active prompts + hashes (reads `/api/v1/prompts`).
 - `/feedback` — online agreement-rate stats (reads `/api/v1/feedback/stats`).
+- `/settings` — non-secret **config** snapshot (`/api/v1/config`) and **per-repo** settings (`/api/v1/repos`, `PATCH` for budgets / `auto_review`).
+- `/try-review` — `POST` preview to `/api/v1/reviews/preview` (no GitHub event).
 
 ## Layout
 

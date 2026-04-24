@@ -265,6 +265,17 @@ sentinel/
 └── .github/workflows/              # ci.yml, eval.yml, dashboard.yml, ablation.yml
 ```
 
+## Documentation
+
+| Document | Purpose |
+|----------|---------|
+| [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md) | Deploy, blog, video, and real hand-labeled benchmarks (operator-owned) |
+| [`docs/DEPLOY.md`](docs/DEPLOY.md) | Production topology (Vercel / Railway / Neon) |
+| [`docs/PROPOSAL_STATUS.md`](docs/PROPOSAL_STATUS.md) | Build spec vs implementation |
+| [`eval/README.md`](eval/README.md) | Eval scripts, fixtures, and baseline |
+| [`SECURITY.md`](SECURITY.md) | Threat model and operator checklist |
+| [`CONTRIBUTING.md`](CONTRIBUTING.md) | Local dev and PR expectations |
+
 ## Roadmap
 
 - [x] Architecture design + database schema
@@ -286,6 +297,7 @@ sentinel/
 - [x] Webhook load tests (Locust) — [`loadtests/README.md`](loadtests/README.md)
 - [x] Deploy: documented path (Neon/Supabase + Railway/Fly + Vercel) — [`docs/DEPLOY.md`](docs/DEPLOY.md)
 - [x] Blog + demo: publishable **drafts** in-repo — [`docs/BLOG_DRAFT.md`](docs/BLOG_DRAFT.md), [`docs/VIDEO_OUTLINE.md`](docs/VIDEO_OUTLINE.md) (record & post externally)
+- [x] External work catalog — [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md)
 
 ## License
 

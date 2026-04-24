@@ -44,6 +44,10 @@ docker compose up --build
    ```
 5. Open a PR with a clear description and the rationale (what, why, trade-offs).
 
+## Project documentation
+
+Eval methodology, deploy, and *off-repo* deliverables (blog, video, real benchmarks) are indexed from the [root README](README.md#documentation) and in [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md). When you change the eval harness, update [`eval/README.md`](eval/README.md) if you add scripts or change fixture layout.
+
 ## Code style
 
 - Python: ruff-formatted, type hints everywhere, prefer `from __future__ import
