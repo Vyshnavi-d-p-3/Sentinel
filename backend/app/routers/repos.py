@@ -7,7 +7,6 @@ Matches the project document: ``GET /api/v1/repos`` and
 
 from __future__ import annotations
 
-from datetime import datetime
 from uuid import UUID
 
 from fastapi import APIRouter, HTTPException, Query
@@ -15,6 +14,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import desc, func, select
 
 from app.core.database import async_session
+from app.core.timeutil import utc_now_naive
 from app.models.database import Repo
 
 router = APIRouter()
@@ -114,7 +114,7 @@ async def patch_repo_settings(repo_id: UUID, body: RepoSettingsBody) -> RepoOut:
             r.daily_token_budget = int(update_data["daily_token_budget"])
         if "per_pr_token_cap" in update_data and update_data["per_pr_token_cap"] is not None:
             r.per_pr_token_cap = int(update_data["per_pr_token_cap"])
-        r.updated_at = datetime.utcnow()
+        r.updated_at = utc_now_naive()
         await session.commit()
         await session.refresh(r)
         return _row_to_out(r)

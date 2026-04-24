@@ -1,0 +1,2 @@
+# Pin loosely; use same Python as backend (3.12+).
+locust>=2.20.0

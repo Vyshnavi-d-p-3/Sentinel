@@ -246,6 +246,7 @@ sentinel/
 │   ├── src/components/             # nav, badges, empty states
 │   ├── next.config.mjs             # standalone build, security headers
 │   └── Dockerfile
+├── loadtests/                      # Locust webhook load test (see README)
 ├── eval/
 │   ├── fixtures/                   # 100 labeled PRs (JSON)
 │   └── scripts/                    # eval_runner.py, scoring.py, ablation.py
@@ -276,6 +277,7 @@ sentinel/
 - [x] Structured JSON logging + request correlation
 - [x] Operator docs (SECURITY, CONTRIBUTING, .env.example)
 - [x] Eval dataset — 100 **mockCI-aligned** JSON fixtures (see `eval/scripts/generate_synthetic_fixtures.py`; hand-curated examples in `eval/fixtures/legacy/`)
+- [x] Webhook load tests (Locust) — [`loadtests/README.md`](loadtests/README.md)
 - [x] Deploy: documented path (Neon/Supabase + Railway/Fly + Vercel) — [`docs/DEPLOY.md`](docs/DEPLOY.md)
 - [x] Blog + demo: publishable **drafts** in-repo — [`docs/BLOG_DRAFT.md`](docs/BLOG_DRAFT.md), [`docs/VIDEO_OUTLINE.md`](docs/VIDEO_OUTLINE.md) (record & post externally)
 

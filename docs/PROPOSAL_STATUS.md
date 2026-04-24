@@ -9,7 +9,7 @@ Tracking the *Sentinel — Complete Build Document* against the repository.
 | `GET/ PATCH /api/v1/repos` | List + per-repo settings | **Implemented** |
 | 100-PR eval dataset | 100 (min 50) | **100 × `synth_pr_*.json`** (mock‑aligned for CI); **hand examples** in `eval/fixtures/legacy/` |
 | Playwright E2E | Core flows | **Home smoke** — `dashboard/e2e/` |
-| Locust load tests | 50 concurrent webhooks | Not automated in-repo |
+| Locust load tests | 50 concurrent webhooks | **In-repo** — [`loadtests/`](../loadtests/) (manual / staging; not in CI) |
 | Public deploy (Railway/Fly + Vercel + Neon) | Yes | **Documented** — [`DEPLOY.md`](DEPLOY.md) |
 | Blog + Loom + public App install | Yes | **Drafts** — [`BLOG_DRAFT.md`](BLOG_DRAFT.md), [`VIDEO_OUTLINE.md`](VIDEO_OUTLINE.md); install = follow `DEPLOY.md` + GitHub App |
 

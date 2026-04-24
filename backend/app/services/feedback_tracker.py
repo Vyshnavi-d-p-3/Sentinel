@@ -28,6 +28,7 @@ from sqlalchemy import desc, func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.timeutil import utc_now_naive
 from app.models.database import Repo, Review, ReviewFeedback
 
 logger = logging.getLogger(__name__)
@@ -298,7 +299,7 @@ def compute_daily_agreement(
     end: datetime | None = None,
 ) -> list[dict[str, Any]]:
     """Per-day agreement-rate timeseries for a chart."""
-    end = end or datetime.utcnow()
+    end = end or utc_now_naive()
     start = end - timedelta(days=days)
     buckets: dict[str, Counter[str]] = defaultdict(Counter)
     for row in rows:

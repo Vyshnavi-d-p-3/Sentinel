@@ -1,7 +1,6 @@
 """SQLAlchemy ORM models — repos, reviews, prompts, eval_runs, cost_ledger, embeddings."""
 
 import uuid
-from datetime import datetime
 
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import (
@@ -21,6 +20,7 @@ from sqlalchemy.dialects.postgresql import JSONB, TSVECTOR, UUID
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
+from app.core.timeutil import utc_now_naive
 
 
 class Repo(Base):
@@ -34,8 +34,8 @@ class Repo(Base):
     auto_review = Column(Boolean, default=True)
     daily_token_budget = Column(Integer, default=100_000)
     per_pr_token_cap = Column(Integer, default=20_000)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     reviews = relationship("Review", back_populates="repo", cascade="all, delete-orphan")
 
@@ -65,7 +65,7 @@ class Review(Base):
     output_tokens = Column(Integer, nullable=False)
     latency_ms = Column(Integer, nullable=False)
     retrieval_ms = Column(Integer)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
     __table_args__ = (
         UniqueConstraint("repo_id", "pr_number", "diff_hash"),
@@ -83,7 +83,7 @@ class Prompt(Base):
     user_template = Column(Text, nullable=False)
     description = Column(Text)
     is_active = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
 
 class EvalRun(Base):
@@ -114,7 +114,7 @@ class EvalRun(Base):
     git_commit_sha = Column(Text)
     ci_run_url = Column(Text)
     notes = Column(Text)
-    run_at = Column(DateTime, default=datetime.utcnow)
+    run_at = Column(DateTime, default=utc_now_naive)
 
 
 class CostLedger(Base):
@@ -130,7 +130,7 @@ class CostLedger(Base):
     cache_write_tokens = Column(Integer, nullable=False, default=0)
     cost_usd = Column(Float, nullable=False)
     pipeline_step = Column(Text, nullable=False, default="review")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
 
 class ReviewFeedback(Base):
@@ -158,7 +158,7 @@ class ReviewFeedback(Base):
     severity = Column(Text)
     github_user = Column(Text)
     reply_body = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
     __table_args__ = (
         Index("ix_review_feedback_review", "review_id"),
@@ -187,8 +187,8 @@ class RepoEmbedding(Base):
         TSVECTOR,
         Computed("to_tsvector('english', chunk_text)", persisted=True),
     )
-    last_commit_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_commit_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     __table_args__ = (
         UniqueConstraint("repo_id", "file_path", "chunk_type", "start_line",

@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime, timedelta
 
+from app.core.timeutil import utc_now_naive
 from app.retrieval.chunker import CodeChunker
 from app.retrieval.context_assembler import ContextAssembler
 from app.retrieval.embedder import VoyageEmbedder
@@ -127,7 +128,7 @@ def test_rrf_merges_two_lists_and_rewards_chunks_in_both():
 
 
 def test_recency_boost_promotes_recent_chunks_over_stale_ones():
-    now = datetime.utcnow()
+    now = utc_now_naive()
     fresh = _chunk("fresh", score=0.10, last=now - timedelta(days=1))
     stale = _chunk("stale", score=0.11, last=now - timedelta(days=400))
     boosted = apply_recency_boost([fresh, stale], now=now, boost_max=0.1, half_life_days=30)

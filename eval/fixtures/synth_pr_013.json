@@ -10,7 +10,7 @@
       "line": 1,
       "category": "suggestion",
       "severity": "low",
-      "description": "Ground truth aligned to mock LLM: suggestion-level finding at diff anchor."
+      "description": "Ground truth aligned to mock LLM: suggestion/low at diff anchor."
     }
   ],
   "expected_no_comments": []

@@ -7,34 +7,34 @@
     },
     "per_category": {
       "security": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "true_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 18,
         "false_positives": 0,
         "false_negatives": 0
       },
       "bug": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "true_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 17,
         "false_positives": 0,
         "false_negatives": 0
       },
       "performance": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "true_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 24,
         "false_positives": 0,
         "false_negatives": 0
       },
       "style": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "true_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 22,
         "false_positives": 0,
         "false_negatives": 0
       },
@@ -42,7 +42,7 @@
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "true_positives": 100,
+        "true_positives": 19,
         "false_positives": 0,
         "false_negatives": 0
       }
@@ -57,34 +57,34 @@
     },
     "per_category": {
       "security": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "true_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 18,
         "false_positives": 0,
         "false_negatives": 0
       },
       "bug": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "true_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 17,
         "false_positives": 0,
         "false_negatives": 0
       },
       "performance": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "true_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 24,
         "false_positives": 0,
         "false_negatives": 0
       },
       "style": {
-        "precision": 0.0,
-        "recall": 0.0,
-        "f1": 0.0,
-        "true_positives": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 22,
         "false_positives": 0,
         "false_negatives": 0
       },
@@ -92,7 +92,7 @@
         "precision": 1.0,
         "recall": 1.0,
         "f1": 1.0,
-        "true_positives": 100,
+        "true_positives": 19,
         "false_positives": 0,
         "false_negatives": 0
       }

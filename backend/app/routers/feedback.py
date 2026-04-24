@@ -9,6 +9,7 @@ from fastapi import APIRouter, Query
 from pydantic import BaseModel, Field
 
 from app.core.database import async_session
+from app.core.timeutil import utc_now_naive
 from app.services.feedback_tracker import (
     compute_category_agreement,
     compute_daily_agreement,
@@ -70,7 +71,7 @@ async def feedback_stats(
     days: int = Query(default=30, ge=1, le=365, description="Window for daily aggregation"),
 ):
     """Aggregate online feedback stats across the requested window."""
-    since = datetime.utcnow() - timedelta(days=days)
+    since = utc_now_naive() - timedelta(days=days)
     rows = await _load_rows(repo_id=repo_id, since=since)
 
     overall: dict[str, Any] = compute_overall_agreement(rows)

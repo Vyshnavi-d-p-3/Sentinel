@@ -2,10 +2,10 @@
 """
 Generate 100 eval fixtures whose *ground truth* matches ``LLM_MOCK_MODE`` output.
 
-The mock LLM always emits one ``suggestion / low`` comment at the first ``+++ b/``
-file path and the ``@@ ... +N`` hunk start line. This script replicates that
-parsing (same as ``llm_gateway._first_file_from_diff``) so CI eval runs achieve
-high strict F1 under mock without hand-labeling 100 real PRs.
+The mock LLM emits one comment at the first ``+++ b/`` path and ``@@ +N`` line,
+with category/severity from ``mock_label_anchor.category_severity_for_anchor``.
+This script mirrors ``llm_gateway._first_file_from_diff`` plus that mapping so
+CI eval achieves high strict F1 under mock.
 
 Hand-crafted examples for demos live in ``eval/fixtures/legacy/`` (not loaded).
 """
@@ -15,7 +15,15 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+BACKEND_DIR = REPO_ROOT / "backend"
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
+from app.services.mock_label_anchor import category_severity_for_anchor
 
 REPO_POOL: list[tuple[str, str]] = [
     ("vercel/next.js", "Next.js"),
@@ -57,6 +65,7 @@ def _make_unified_diff(index: int) -> str:
 def _fixture_payload(index: int) -> dict:
     diff = _make_unified_diff(index)
     path, line = _first_file_from_diff(diff)
+    cat, sev = category_severity_for_anchor(path, line)
     repo, _label = REPO_POOL[index % len(REPO_POOL)]
     return {
         "pr_id": f"synth_bench_pr_{index:04d}",
@@ -68,10 +77,10 @@ def _fixture_payload(index: int) -> dict:
             {
                 "file": path,
                 "line": line,
-                "category": "suggestion",
-                "severity": "low",
+                "category": cat.value,
+                "severity": sev.value,
                 "description": (
-                    "Ground truth aligned to mock LLM: suggestion-level finding at diff anchor."
+                    f"Ground truth aligned to mock LLM: {cat.value}/{sev.value} at diff anchor."
                 ),
             }
         ],

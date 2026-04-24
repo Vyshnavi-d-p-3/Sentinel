@@ -20,6 +20,7 @@ from sqlalchemy import delete
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.timeutil import utc_now_naive
 from app.models.database import RepoEmbedding
 from app.retrieval.chunker import CodeChunk, CodeChunker
 from app.retrieval.embedder import VoyageEmbedder
@@ -50,10 +51,10 @@ class EmbeddingPipeline:
         Index every file in ``files`` (path → content) and return chunks stored.
 
         ``last_commit_at`` lets fusion recency-boost recently changed files; if
-        omitted we use ``utcnow()``. When ``replace_existing`` is True (default),
+        omitted we use the current UTC time. When ``replace_existing`` is True (default),
         all prior chunks for the touched files are deleted before insert.
         """
-        commit_ts = last_commit_at or datetime.utcnow()
+        commit_ts = last_commit_at or utc_now_naive()
 
         chunks: list[CodeChunk] = []
         for path, content in files.items():
@@ -105,7 +106,7 @@ class EmbeddingPipeline:
                 "end_line": stmt.excluded.end_line,
                 "embedding": stmt.excluded.embedding,
                 "last_commit_at": stmt.excluded.last_commit_at,
-                "updated_at": datetime.utcnow(),
+                "updated_at": utc_now_naive(),
             },
         )
         await session.execute(stmt)

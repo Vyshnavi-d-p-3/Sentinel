@@ -37,6 +37,7 @@ from pathlib import Path
 from sqlalchemy import func, select
 
 from app.core.database import async_session
+from app.core.timeutil import utc_now_naive
 from app.models.database import Repo, RepoEmbedding
 from app.retrieval.indexer import EmbeddingPipeline
 from app.retrieval.repo_walker import (
@@ -131,7 +132,7 @@ def _stable_github_id(full_name: str) -> int:
 
 def _parse_commit_ts(raw: str | None) -> datetime:
     if not raw:
-        return datetime.utcnow()
+        return utc_now_naive()
     try:
         # Accept both naive and timezone-aware ISO strings.
         ts = datetime.fromisoformat(raw.replace("Z", "+00:00"))

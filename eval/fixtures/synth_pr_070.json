@@ -8,9 +8,9 @@
     {
       "file": "packages/bench_20/module_070.py",
       "line": 1,
-      "category": "suggestion",
+      "category": "security",
       "severity": "low",
-      "description": "Ground truth aligned to mock LLM: suggestion-level finding at diff anchor."
+      "description": "Ground truth aligned to mock LLM: security/low at diff anchor."
     }
   ],
   "expected_no_comments": []

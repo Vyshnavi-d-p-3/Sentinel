@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 
 from app.config import settings
+from app.core.timeutil import utc_now_naive
 
 
 @dataclass
@@ -92,7 +93,7 @@ def apply_recency_boost(
     if boost_cap <= 0 or half_life <= 0:
         return chunks
 
-    current_time = now or datetime.utcnow()
+    current_time = now or utc_now_naive()
 
     for chunk in chunks:
         if chunk.last_commit_at is None:

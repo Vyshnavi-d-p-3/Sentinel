@@ -24,7 +24,7 @@ import json
 import logging
 import os
 import sys
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -262,7 +262,7 @@ def path_to_stat(path: Path) -> str | None:
 
 def stat_to_datetime(path: Path) -> datetime | None:
     try:
-        return datetime.utcfromtimestamp(path.stat().st_mtime)
+        return datetime.fromtimestamp(path.stat().st_mtime, UTC).replace(tzinfo=None)
     except FileNotFoundError:
         return None
 

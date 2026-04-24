@@ -16,7 +16,6 @@ from pydantic import BaseModel
 
 from app.config import settings
 from app.models.review_output import (
-    CommentCategory,
     CrossReferenceOutput,
     FileReviewOutput,
     FileRisk,
@@ -24,9 +23,9 @@ from app.models.review_output import (
     ReviewComment,
     ReviewOutput,
     ReviewSynthesis,
-    Severity,
     TriageReport,
 )
+from app.services.mock_label_anchor import category_severity_for_anchor
 
 logger = logging.getLogger(__name__)
 T = TypeVar("T", bound=BaseModel)
@@ -191,6 +190,7 @@ class LLMGateway:
 
     def _mock_review_output(self, user_prompt: str) -> ReviewOutput:
         path, line = self._first_file_from_diff(user_prompt)
+        cat, sev = category_severity_for_anchor(path, line)
         return ReviewOutput(
             summary=(
                 f"Mock review (no LLM keys configured): scanned `{path}`. "
@@ -200,8 +200,8 @@ class LLMGateway:
                 ReviewComment(
                     file_path=path,
                     line_number=line,
-                    category=CommentCategory.SUGGESTION,
-                    severity=Severity.LOW,
+                    category=cat,
+                    severity=sev,
                     title="Verify behavior against requirements",
                     body=(
                         "This is deterministic scaffold output. "
@@ -220,14 +220,15 @@ class LLMGateway:
         m = re.search(r"^## File under review\n(.+)$", user_prompt, re.MULTILINE)
         if m:
             path = m.group(1).strip() or path
+        cat, sev = category_severity_for_anchor(path, line)
         return FileReviewOutput(
             file_path=path,
             comments=[
                 ReviewComment(
                     file_path=path,
                     line_number=line,
-                    category=CommentCategory.SUGGESTION,
-                    severity=Severity.LOW,
+                    category=cat,
+                    severity=sev,
                     title=f"Mock review for {path}",
                     body="Deterministic stub output from the mock LLM gateway.",
                     suggestion=None,

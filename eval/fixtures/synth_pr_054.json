@@ -9,8 +9,8 @@
       "file": "packages/bench_4/module_054.py",
       "line": 1,
       "category": "suggestion",
-      "severity": "low",
-      "description": "Ground truth aligned to mock LLM: suggestion-level finding at diff anchor."
+      "severity": "medium",
+      "description": "Ground truth aligned to mock LLM: suggestion/medium at diff anchor."
     }
   ],
   "expected_no_comments": []

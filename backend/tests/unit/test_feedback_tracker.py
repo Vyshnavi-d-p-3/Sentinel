@@ -5,6 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from types import SimpleNamespace
 
+from app.core.timeutil import utc_now_naive
 from app.services.feedback_tracker import (
     ACTION_DISMISSED,
     ACTION_REPLIED,
@@ -101,7 +102,7 @@ def test_resolved_event_is_parsed() -> None:
 
 
 def test_overall_agreement_uses_resolved_over_resolved_plus_dismissed() -> None:
-    now = datetime.utcnow()
+    now = utc_now_naive()
     rows = [
         _row(ACTION_RESOLVED, category="bug", created_at=now),
         _row(ACTION_RESOLVED, category="bug", created_at=now),
@@ -118,7 +119,7 @@ def test_overall_agreement_uses_resolved_over_resolved_plus_dismissed() -> None:
 
 
 def test_category_agreement_breakdown_is_sorted_by_total_volume() -> None:
-    now = datetime.utcnow()
+    now = utc_now_naive()
     rows = [
         _row(ACTION_RESOLVED, category="bug", created_at=now),
         _row(ACTION_RESOLVED, category="bug", created_at=now),

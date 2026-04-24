@@ -12,6 +12,7 @@ from sqlalchemy import func, select
 
 from app.config import settings
 from app.core.database import async_session
+from app.core.timeutil import utc_now_naive
 from app.models.database import CostLedger, Repo
 from app.services.pricing import estimate_llm_cost_usd
 
@@ -95,7 +96,7 @@ async def cost_summary(
     """
     days = _range_days(range)
     repo_uuid = _parse_repo_id(repo_id)
-    now = datetime.utcnow()
+    now = utc_now_naive()
     since = now - timedelta(days=days)
 
     async with async_session() as session:
@@ -132,7 +133,7 @@ async def daily_costs(
 ):
     """Compact daily timeseries — just the per-day rows."""
     repo_uuid = _parse_repo_id(repo_id)
-    now = datetime.utcnow()
+    now = utc_now_naive()
     since = now - timedelta(days=days)
 
     async with async_session() as session:
