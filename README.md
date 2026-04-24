@@ -22,7 +22,7 @@
 
 The market is saturated with "AI code review" tools that are thin wrappers around a prompt. None answer the fundamental question: **is this actually finding real bugs, or generating plausible-sounding noise?**
 
-Sentinel answers that with a proper evaluation methodology — 100 hand-labeled PRs from 5 major OSS repos, scored per-category, regression-gated in CI. An honestly reported 0.35 F1 with clear failure analysis is more valuable than a claimed 0.90 F1 without methodology.
+Sentinel answers that with a reproducible evaluation methodology: **100 in-repo PR fixtures** (mock‑aligned synthetics for stable CI, plus hand-curated examples under `eval/fixtures/legacy/`), scored per-category with a **regression gate** in CI. The same harness can run with real LLM keys for honest F1 on non-synthetic data. A low, defensible F1 with clear failure analysis beats a claimed 0.90 without methodology.
 
 ## Key Design Decisions
 
