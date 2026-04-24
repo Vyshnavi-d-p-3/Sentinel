@@ -1,5 +1,23 @@
 # Troubleshooting
 
+## The application is not running (nothing on :3000 / :8000)
+
+Work through this in order:
+
+1. **Postgres** — The API needs a database. `DATABASE_URL` in `backend/.env` must point to a **running** server (default in `.env.example` is `127.0.0.1:5432`).  
+   - With Docker: `docker compose up -d db` (from repo root) or full stack: `docker compose up --build`.  
+   - Without Docker: install Postgres locally and create DB/user, or `brew services start postgresql@16` (example).
+
+2. **Backend** — From `backend/`: venv + `pip install -r requirements.txt`, then `alembic upgrade head` (or `DB_AUTO_CREATE_TABLES=true` once).  
+   Test: `curl -sS http://127.0.0.1:8000/health` should return JSON.
+
+3. **Dashboard** — From `dashboard/`: `npm install`, then `npm run dev` (or use **root** `npm run dev` — see main README).  
+   Test: open `http://127.0.0.1:3000` (not 0.0.0.0 in some VPN setups—try `127.0.0.1`).
+
+4. **Port conflicts** — If something else uses 3000 or 8000, stop it or set `PORT=3001` for Next and `--port 8001` for uvicorn (and set `NEXT_PUBLIC_API_URL` / dashboard `.env.local` to match the API port).
+
+5. **Still stuck** — Paste the **first error** from the terminal where you started the backend and from `dashboard` (or from `npm run dev` at repo root).
+
 ## Next.js dev server: HTTP 500, “missing required error components, refreshing…”
 
 This almost always means **Turbopack or a stale `.next` cache** left the dev server (`npm run dev`) in a bad state—not your application code.

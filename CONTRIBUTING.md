@@ -28,6 +28,10 @@ You can also boot the whole stack with one command:
 docker compose up --build
 ```
 
+Without Docker (Postgres on localhost), from the **repo root** after
+`backend` venv + `dashboard` `npm install` are set up: `npm install && npm run dev`
+(see the main [README](README.md#quick-start)).
+
 ## Workflow
 
 1. Fork the repo and create a feature branch off `main`.

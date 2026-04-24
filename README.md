@@ -154,35 +154,53 @@ PR Diff
 git clone https://github.com/Vyshnavi-d-p-3/sentinel.git
 cd sentinel
 cp .env.example .env
+```
 
-# All-in-one (db + backend + dashboard)
+### Option A — Docker (recommended if you have Docker)
+
+Runs **Postgres + API + dashboard**; no local Postgres install.
+
+```bash
 docker compose up --build
 ```
 
 Open the dashboard at <http://localhost:3000>, the API at
-<http://localhost:8000/docs>, and point a GitHub App at
-`http://<your-host>/webhook/github` (forward via [smee.io](https://smee.io)
-during local dev).
+<http://localhost:8000/docs>.
 
-**Dashboard shows errors or “Cannot reach the API”?** The UI proxies to the
-backend (`NEXT_PUBLIC_API_URL`, default `http://localhost:8000`). Start the API
-first, or see [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
+### Option B — One terminal, no Docker (Postgres must already be running)
 
-For a manual install:
+1. Create `backend/.env` with a valid `DATABASE_URL` (e.g. `postgresql+asyncpg://user:pass@127.0.0.1:5432/sentinel`).  
+2. Install once:
 
 ```bash
-# Backend
-cd backend
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-alembic upgrade head        # or set DB_AUTO_CREATE_TABLES=true on first boot
-uvicorn app.main:app --reload
-
-# Dashboard (separate terminal)
-cd dashboard && npm install && npm run dev
-# If you see HTTP 500 / "missing required error components": rm -rf .next && npm run dev
-# (see docs/TROUBLESHOOTING.md)
+cd backend && python3 -m venv .venv && . .venv/bin/activate && pip install -r requirements.txt && alembic upgrade head && cd ..
+cd dashboard && npm install && cd ..
+npm install
 ```
+
+3. From the **repository root**, start **API and UI together**:
+
+```bash
+npm run dev
+```
+
+This runs uvicorn on **:8000** and Next on **:3000**. If `npm run dev` says the venv is missing, complete step 2.
+
+### Option C — Two terminals (same as B, but manual)
+
+```bash
+# Terminal 1 — backend
+cd backend && . .venv/bin/activate && uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+
+# Terminal 2 — dashboard
+cd dashboard && npm run dev
+```
+
+If the browser shows HTTP **500** or *“missing required error components”*: `cd dashboard && rm -rf .next && npm run dev` — see [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
+
+**GitHub webhooks in dev** — point a GitHub App at `http://<your-host>/webhook/github` (tunnel via [smee.io](https://smee.io) if needed).
+
+**Dashboard can’t load data?** The UI proxies to the API (`NEXT_PUBLIC_API_URL`, default `http://localhost:8000`). Ensure the API responds: `curl -sS http://127.0.0.1:8000/health`. See **Troubleshooting** if not.
 
 ## Security
 
@@ -231,6 +249,7 @@ open http://localhost:3000                  # dashboard
 
 ```
 sentinel/
+├── package.json            # root: npm run dev (API + dashboard via concurrently)
 ├── backend/
 │   ├── app/
 │   │   ├── main.py                 # FastAPI entry, middleware order, routers

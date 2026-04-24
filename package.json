@@ -1,0 +1,13 @@
+{
+  "name": "sentinel",
+  "private": true,
+  "description": "Monorepo helper — start API + dashboard with one command (see README Quick Start)",
+  "scripts": {
+    "dev": "concurrently -k -n api,ui -c blue,magenta \"npm run dev:backend\" \"npm run dev:dashboard\"",
+    "dev:backend": "cd backend && . .venv/bin/activate && uvicorn app.main:app --reload --host 127.0.0.1 --port 8000",
+    "dev:dashboard": "cd dashboard && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
