@@ -24,6 +24,18 @@ On **macOS**, the default file watcher can hit the `ulimit` and **fail to see `a
 
 **Fix:** The dashboard `npm run dev` script enables **polling** (`WATCHPACK_POLLING=true`) to avoid this. If you still see EMFILE, raise the limit for the shell: `ulimit -n 10240`, or use production mode: `npm run build && npm start`.
 
+## Home page is 404 (generic Next “This page could not be found”, HTML references `pages/_app`)
+
+The dev server is running from `dashboard/`, but **`src/app` routes are not being picked up**—usually a **stale or half-written `.next`** after switching branches, mixing `next start` with `next dev`, or an interrupted compile.
+
+**Fix:** Stop the dev server, then:
+
+```bash
+cd dashboard && rm -rf .next && npm run dev
+```
+
+Confirm `GET /` returns **200** in the terminal log. If it persists, run `npm run build` once; if the build fails, fix the reported error before returning to `npm run dev`.
+
 ## Next.js dev server: HTTP 500, “missing required error components, refreshing…”
 
 This almost always means **Turbopack or a stale `.next` cache** left the dev server (`npm run dev`) in a bad state—not your application code.
