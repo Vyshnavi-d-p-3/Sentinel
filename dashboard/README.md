@@ -13,7 +13,8 @@ npm run dev
 The dashboard expects the backend to be reachable at `NEXT_PUBLIC_API_URL`
 (default `http://localhost:8000`). All `/api/*` and `/health` requests are
 proxied via `next.config.mjs` rewrites, so the dashboard itself has no CORS
-concerns.
+concerns. **If the page loads but data never appears,** the API is probably not
+running or the URL is wrong—see [`../docs/TROUBLESHOOTING.md`](../docs/TROUBLESHOOTING.md).
 
 ## Pages
 

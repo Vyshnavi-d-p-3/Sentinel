@@ -164,6 +164,10 @@ Open the dashboard at <http://localhost:3000>, the API at
 `http://<your-host>/webhook/github` (forward via [smee.io](https://smee.io)
 during local dev).
 
+**Dashboard shows errors or “Cannot reach the API”?** The UI proxies to the
+backend (`NEXT_PUBLIC_API_URL`, default `http://localhost:8000`). Start the API
+first, or see [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
+
 For a manual install:
 
 ```bash
@@ -275,6 +279,7 @@ sentinel/
 | [`eval/README.md`](eval/README.md) | Eval scripts, fixtures, and baseline |
 | [`SECURITY.md`](SECURITY.md) | Threat model and operator checklist |
 | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Local dev and PR expectations |
+| [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md) | Dashboard not loading, API down, 401, HTTPS, mixed content |
 
 ## Roadmap
 

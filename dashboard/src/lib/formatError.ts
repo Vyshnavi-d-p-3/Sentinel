@@ -87,10 +87,18 @@ export function formatApiError(error: unknown): FormattedError {
   }
 
   if (error instanceof Error) {
+    const msg = error.message;
+    const looksNetwork =
+      /failed to fetch|networkerror|load failed|fetch failed|econnrefused|network request failed|aborted|timeout/i.test(
+        msg,
+      );
     return {
-      title: "Error",
-      lines: [error.message],
+      title: looksNetwork ? "Cannot reach the API" : "Error",
+      lines: [msg],
       tone: "danger",
+      hint: looksNetwork
+        ? "The Next.js app proxies /health and /api/* to the backend (see next.config.mjs → NEXT_PUBLIC_API_URL, default http://127.0.0.1:8000). Start the API: cd backend && uvicorn app.main:app --reload, or run docker compose up from the repo root. If the UI is on HTTPS, the API must be HTTPS too (or use same-origin / a reverse proxy) to avoid mixed-content blocks."
+        : undefined,
     };
   }
 

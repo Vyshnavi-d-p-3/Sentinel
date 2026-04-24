@@ -44,9 +44,17 @@ export default function HomePage() {
         <Kpi
           label="Reviews logged"
           value={
-            recent.isLoading ? "—" : formatInt(recent.data?.total ?? 0)
+            recent.isLoading
+              ? "—"
+              : recent.isError
+                ? "—"
+                : formatInt(recent.data?.total ?? 0)
           }
-          subtitle="all-time, /api/v1/reviews"
+          subtitle={
+            recent.isError
+              ? "API unreachable — is the backend running on port 8000?"
+              : "all-time, /api/v1/reviews"
+          }
           href="/reviews"
         />
         <Kpi
@@ -54,12 +62,16 @@ export default function HomePage() {
           value={
             feedback.isLoading
               ? "—"
-              : formatPercent(feedback.data?.agreement_rate ?? 0)
+              : feedback.isError
+                ? "—"
+                : formatPercent(feedback.data?.agreement_rate ?? 0)
           }
           subtitle={
-            feedback.data
-              ? `${formatInt(feedback.data.total_events)} events`
-              : "resolved / (resolved + dismissed)"
+            feedback.isError
+              ? "API unreachable — start FastAPI or check NEXT_PUBLIC_API_URL"
+              : feedback.data
+                ? `${formatInt(feedback.data.total_events)} events`
+                : "resolved / (resolved + dismissed)"
           }
           href="/feedback"
         />
