@@ -48,3 +48,5 @@ This is the **reference path** to ship the build document’s “public URLs” 
 ---
 
 For a **single-host** production box, you can also run the published Docker images and a managed Postgres; the compose file in the repo is the source of truth for service wiring.
+
+After deploy, **blog, video, and a real hand-labeled benchmark** remain operator-owned—see [`PUBLISHING_AND_BENCHMARK.md`](PUBLISHING_AND_BENCHMARK.md) so external messaging stays accurate.

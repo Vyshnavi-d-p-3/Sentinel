@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 *A GitHub App that reviews pull requests using hybrid retrieval + LLM synthesis,*
-*backed by a 100-PR evaluation harness (mockCI‑aligned fixtures + legacy hand examples) with per-category P/R/F1.*
+*with a regression-gated eval harness: 100 mock‑aligned PR fixtures in CI, optional legacy hand examples, and the same scoring pipeline for real‑LLM runs off-line.*
 
 [Architecture](#architecture) · [Quick Start](#quick-start) · [Evaluation](#evaluation-methodology) · [Security](#security) · [Deployment](#deployment) · [Tech Stack](#tech-stack) · [Roadmap](#roadmap)
 
@@ -20,16 +20,16 @@
 
 ## The Problem
 
-The market is saturated with "AI code review" tools that are thin wrappers around a prompt. None answer the fundamental question: **is this actually finding real bugs, or generating plausible-sounding noise?**
+The market is saturated with "AI code review" tools that are thin wrappers around a prompt. The hard part is not generating text—it is **knowing whether the system catches real issues** without fooling yourself.
 
-Sentinel answers that with a reproducible evaluation methodology: **100 in-repo PR fixtures** (mock‑aligned synthetics for stable CI, plus hand-curated examples under `eval/fixtures/legacy/`), scored per-category with a **regression gate** in CI. The same harness can run with real LLM keys for honest F1 on non-synthetic data. A low, defensible F1 with clear failure analysis beats a claimed 0.90 without methodology.
+Sentinel separates three concerns: (1) **a production pipeline** (webhook → retrieval → structured review → cost controls), (2) **a fixed scoring harness** (per-category P/R/F1, not LLM-as-judge), and (3) **datasets of varying cost**. The repo ships **100 synthetic JSON fixtures** aligned to the **mock LLM** so CI can regression-test the harness cheaply. **Hand-curated examples** live in `eval/fixtures/legacy/` and are a seed for human review, not a statistically representative benchmark. Aspirational: a larger, diversely hand-labeled set from real OSS PRs; that work is **off-repo** and optional—see [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md).
 
 ## Key Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
 | Retrieval | Hybrid BM25 + dense (pgvector) with RRF | BM25 catches exact identifiers; dense catches semantic similarity. Fusion outperforms either alone |
-| Evaluation | Hand-labeled ground truth, not LLM-as-judge | LLM-as-judge creates echo chambers. Per-category P/R/F1 reveals where the model actually fails |
+| Evaluation | Human-readable labels + deterministic scorer (not LLM-as-judge) | CI uses mock-aligned **synthetic** labels; **real** hand labels are a separate curation effort—same metrics, stronger external claims |
 | Cost control | Daily budgets + per-PR caps + circuit breaker | Production AI needs financial guardrails — one misconfigured repo shouldn't drain $500 |
 | Structured output | Pydantic v2 with JSON mode | Type-safe review comments enable automated scoring and consistent GitHub annotations |
 | CI gating | F1 regression threshold per category | Any prompt change that drops category F1 >5% fails the build |
@@ -136,13 +136,17 @@ PR Diff
 
 ## Evaluation Methodology
 
-**Dataset:** 100 hand-labeled PRs from 5 OSS repos (Next.js, FastAPI, Flask, LangChain, Express). Each PR has 2–5 expected comments across 4 categories (security, bug, performance, style) at 4 severity levels. Includes `expected_no_comments` entries for false positive detection.
+**CI default (`eval/fixtures/synth_pr_*.json`):** 100 JSON fixtures **generated** to match the mock LLM’s anchors (`eval/scripts/generate_synthetic_fixtures.py`). Labels span categories and severities via a deterministic map (`backend/app/services/mock_label_anchor.py`). This proves the **orchestrator + scorer + gate** stay wired; it does *not* by itself measure bug-finding quality on real code.
 
-**Scoring:** Per-category precision, recall, F1 with fuzzy matching — file path exact, line number ±5 tolerance, category exact.
+**Legacy hand examples (`eval/fixtures/legacy/`):** A small, human-written set (not in the 100-PR CI glob). Use them for demos and for extending a future benchmark; they are not a replacement for a curated multi-repo study.
 
-**CI Gate:** Any prompt or model change that drops a category F1 by more than 5% from baseline fails the build.
+**Scoring:** Per-category precision, recall, and F1; strict match requires file path, category, and line within tolerance (see `eval/scripts/scoring.py`). Soft and clean-PR metrics are reported alongside.
 
-**Ablation:** A separate eval pass with retrieval disabled (the `StaticContextRetriever`) reports the F1 lift attributable to the hybrid retriever — visible on the `/eval` dashboard page.
+**CI gate:** A prompt or pipeline change that drops strict per-category F1 by more than the threshold against `eval/baselines/baseline.json` fails the build (`eval.yml`).
+
+**Ablation:** Optional pass with retrieval disabled (`StaticContextRetriever`) to attribute lift to hybrid retrieval—surfaced on `/eval` when results exist.
+
+**Real LLM / custom labels:** Run `python eval/scripts/eval_runner.py --no-mock` with provider keys, or add fixtures under `eval/fixtures/` following `eval/scripts/labeling_rubric.md`. That is the path to defensible F1 on non-synthetic data. Operational checklist: [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md).
 
 ## Quick Start
 
@@ -192,6 +196,8 @@ checklist live in [`SECURITY.md`](./SECURITY.md). Highlights:
 - Containers run as a non-root user with `tini` as PID 1
 
 ## Deployment
+
+Operator-owned next steps (blog, video, real labeled eval) are catalogued in [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md).
 
 ### Recommended single-region topology
 
@@ -248,7 +254,7 @@ sentinel/
 │   └── Dockerfile
 ├── loadtests/                      # Locust webhook load test (see README)
 ├── eval/
-│   ├── fixtures/                   # 100 labeled PRs (JSON)
+│   ├── fixtures/                   # 100 CI JSON fixtures + legacy/ hand examples
 │   └── scripts/                    # eval_runner.py, scoring.py, ablation.py
 ├── docs/
 ├── docker-compose.yml              # db + backend + dashboard

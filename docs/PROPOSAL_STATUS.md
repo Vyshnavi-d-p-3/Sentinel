@@ -13,4 +13,9 @@ Tracking the *Sentinel — Complete Build Document* against the repository.
 | Public deploy (Railway/Fly + Vercel + Neon) | Yes | **Documented** — [`DEPLOY.md`](DEPLOY.md) |
 | Blog + Loom + public App install | Yes | **Drafts** — [`BLOG_DRAFT.md`](BLOG_DRAFT.md), [`VIDEO_OUTLINE.md`](VIDEO_OUTLINE.md); install = follow `DEPLOY.md` + GitHub App |
 
-Success metrics (F1, latency, cost) under **real** LLM keys are for you to measure after deploy; the **mock** harness now reports **strict F1 = 1.0** on the synthetic set by construction.
+Success metrics (F1, latency, cost) under **real** LLM keys are for you to measure after deploy. The default **mock**+synthetic bundle reports high strict F1 by **construction** (labels aligned to the mock); that does **not** generalize to real traffic until you run a **separate** labeled eval (see [`PUBLISHING_AND_BENCHMARK.md`](PUBLISHING_AND_BENCHMARK.md)).
+
+| Outside-repo work | Doc |
+|--------------------|-----|
+| Deploy, blog, video, hand-labeled benchmark | [`PUBLISHING_AND_BENCHMARK.md`](PUBLISHING_AND_BENCHMARK.md) |
+| Infra reference | [`DEPLOY.md`](DEPLOY.md) |
