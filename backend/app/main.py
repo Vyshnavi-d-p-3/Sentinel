@@ -44,6 +44,7 @@ from app.routers import (
     eval_router,
     feedback,
     prompts,
+    repos,
     reviews,
     webhook,
 )
@@ -146,6 +147,7 @@ app.include_router(webhook.router, prefix="/webhook", tags=["webhooks"])
 # Dashboard surface — protected by the API-key dependency when one is set.
 api_protected = [Depends(require_api_key)]
 app.include_router(reviews.router, prefix="/api/v1/reviews", tags=["reviews"], dependencies=api_protected)
+app.include_router(repos.router, prefix="/api/v1/repos", tags=["repos"], dependencies=api_protected)
 app.include_router(eval_router.router, prefix="/api/v1/eval", tags=["eval"], dependencies=api_protected)
 app.include_router(costs.router, prefix="/api/v1/costs", tags=["costs"], dependencies=api_protected)
 app.include_router(prompts.router, prefix="/api/v1/prompts", tags=["prompts"], dependencies=api_protected)

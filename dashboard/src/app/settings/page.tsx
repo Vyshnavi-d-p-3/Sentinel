@@ -1,6 +1,7 @@
 "use client";
 
 import { useConfig } from "@/hooks/config";
+import { usePatchRepoSettings, useReposList } from "@/hooks/repos";
 import { Callout } from "@/components/callout";
 import { ErrorPanel, LoadingBar } from "@/components/empty";
 import { formatInt } from "@/lib/format";
@@ -30,6 +31,8 @@ export default function SettingsPage() {
           For dashboard auth, prefer short-lived tokens over long-lived keys when possible.
         </p>
       </Callout>
+
+      <RepoInstallationsBlock />
 
       <section className="grid gap-4 lg:grid-cols-2">
         <Card title="Build">
@@ -157,6 +160,64 @@ export default function SettingsPage() {
           </div>
         </Card>
       </section>
+    </div>
+  );
+}
+
+function RepoInstallationsBlock() {
+  const { data, isLoading, isError, error } = useReposList(1, 50);
+  const patch = usePatchRepoSettings();
+
+  if (isLoading) {
+    return (
+      <p className="text-sm text-muted" role="status">
+        Loading registered repositories…
+      </p>
+    );
+  }
+  if (isError) return <ErrorPanel error={error} />;
+
+  if (!data?.repos.length) {
+    return (
+      <Callout variant="info" title="No repository installations">
+        <p className="text-sm">
+          When the GitHub App is installed, each repository appears here. You can toggle
+          per-repo <strong>auto-review</strong> and adjust token budgets (via API) without
+          changing global environment defaults.
+        </p>
+      </Callout>
+    );
+  }
+
+  return (
+    <div className="rounded-lg border border-border bg-panel p-4">
+      <h2 className="mb-3 text-sm font-semibold">Repository installations</h2>
+      <div className="space-y-3">
+        {data.repos.map((repo) => (
+          <div
+            key={repo.id}
+            className="flex flex-col gap-2 border-b border-border/40 pb-3 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
+          >
+            <div>
+              <div className="font-mono text-sm text-fg">{repo.full_name}</div>
+              <div className="text-xxs text-muted">
+                Daily budget {formatInt(repo.daily_token_budget)} — per-PR cap{" "}
+                {formatInt(repo.per_pr_token_cap)} — default branch {repo.default_branch}
+              </div>
+            </div>
+            <button
+              type="button"
+              className="shrink-0 self-start rounded-md border border-border bg-panel2 px-3 py-1.5 text-sm text-fg hover:border-accent/50 disabled:opacity-50"
+              disabled={patch.isPending}
+              onClick={() =>
+                patch.mutate({ id: repo.id, body: { auto_review: !repo.auto_review } })
+              }
+            >
+              Auto-review: {repo.auto_review ? "on" : "off"}
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

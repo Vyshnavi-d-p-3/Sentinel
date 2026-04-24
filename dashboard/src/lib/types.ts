@@ -70,6 +70,35 @@ export interface ReviewDetailResponse {
   review: ReviewDetail;
 }
 
+// ---- Repos (GitHub App installations) -----------------------------------
+
+export interface Repo {
+  id: string;
+  github_id: number;
+  full_name: string;
+  installation_id: number;
+  default_branch: string;
+  auto_review: boolean;
+  daily_token_budget: number;
+  per_pr_token_cap: number;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface RepoListResponse {
+  repos: Repo[];
+  total: number;
+  page: number;
+  per_page: number;
+}
+
+export interface RepoSettingsPatch {
+  default_branch?: string;
+  auto_review?: boolean;
+  daily_token_budget?: number;
+  per_pr_token_cap?: number;
+}
+
 // ---- Feedback ------------------------------------------------------------
 
 export interface CategoryStat {
