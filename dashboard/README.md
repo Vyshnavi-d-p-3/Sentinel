@@ -41,8 +41,12 @@ src/
 ## Commands
 
 ```bash
-npm run dev        # dev server
+npm run dev        # dev server (Webpack; recommended)
+npm run dev:turbo  # optional Turbopack — if you get HTTP 500, use `dev` or `rm -rf .next`
 npm run build      # production build
+npm start          # production server (after build)
 npm run typecheck  # tsc --noEmit
 npm run lint       # next lint
 ```
+
+If the app **returns 500** in the browser with *“missing required error components”*, delete `.next` and restart—see [`../docs/TROUBLESHOOTING.md`](../docs/TROUBLESHOOTING.md).

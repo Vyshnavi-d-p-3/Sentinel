@@ -1,5 +1,19 @@
 # Troubleshooting
 
+## Next.js dev server: HTTP 500, “missing required error components, refreshing…”
+
+This almost always means **Turbopack or a stale `.next` cache** left the dev server (`npm run dev`) in a bad state—not your application code.
+
+**Fix (try in order):**
+
+1. Stop the dev server (Ctrl+C).
+2. Remove the cache: `cd dashboard && rm -rf .next`
+3. Start again: `npm run dev` (default is the **Webpack** dev server; it is slower but more stable than Turbo on some macOS setups).
+4. If you need Turbopack: `npm run dev:turbo`
+5. **Nuclear option** (closest to production): `npm run build && npm start` — serves on port 3000 with no HMR.
+
+If the page is still blank, open DevTools → **Console** and note the first red error before filing an issue.
+
 ## Dashboard “not loading,” blank data, or red error panels
 
 The Next.js UI **does not embed** the Python API. In dev, `next.config.mjs` **rewrites** `/api/*` and `/health` to the backend URL (`NEXT_PUBLIC_API_URL`, default `http://localhost:8000`). If nothing listens there, the browser gets a **network error** and the home page shows **“Cannot reach the API”** on the health card.

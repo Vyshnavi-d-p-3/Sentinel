@@ -180,6 +180,8 @@ uvicorn app.main:app --reload
 
 # Dashboard (separate terminal)
 cd dashboard && npm install && npm run dev
+# If you see HTTP 500 / "missing required error components": rm -rf .next && npm run dev
+# (see docs/TROUBLESHOOTING.md)
 ```
 
 ## Security

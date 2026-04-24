@@ -35,9 +35,9 @@ export default function AppError({
         Try again
       </button>
       <p className="mt-8 text-xs text-muted">
-        If you recently ran <code className="rounded bg-panel2 px-1">next dev --turbo</code>, run{" "}
-        <code className="rounded bg-panel2 px-1">rm -rf .next &amp;&amp; npm run build</code> before{" "}
-        <code className="rounded bg-panel2 px-1">npm start</code>.
+        Try <code className="rounded bg-panel2 px-1">cd dashboard &amp;&amp; rm -rf .next &amp;&amp; npm run dev</code>. If
+        you used Turbopack (<code className="rounded bg-panel2 px-1">npm run dev:turbo</code>) and see a 500 loop,
+        switch to the default dev script or run <code className="rounded bg-panel2 px-1">npm run build &amp;&amp; npm start</code>.
       </p>
     </div>
   );

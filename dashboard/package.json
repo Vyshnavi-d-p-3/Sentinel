@@ -7,7 +7,8 @@
     "npm": ">=9"
   },
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
+    "dev:turbo": "next dev --turbo",
     "dev:webpack": "next dev",
     "dev:poll": "WATCHPACK_POLLING=true CHOKIDAR_USEPOLLING=true next dev",
     "build": "next build",
