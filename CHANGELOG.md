@@ -6,6 +6,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### 2026-04-24
+
+- **Dev UX:** root `package.json` with `concurrently` — `npm run dev` runs API + dashboard; `package-lock.json` at repo root.
+- **Dashboard:** `WATCHPACK_POLLING=true` in default `npm run dev` to avoid macOS `EMFILE` and bogus `/` 404; `dev:turbo` for optional Turbopack.
+- **Docs:** `docs/TROUBLESHOOTING.md` (connectivity, Next 500, EMFILE), `docs/PUBLISHING_AND_BENCHMARK.md`, README Quick Start (Docker / one-terminal / two-terminal), `eval/README.md` hub, error hints when the API is unreachable.
+
 ### Added
 
 - **Security middleware stack**
