@@ -1,0 +1,17 @@
+{
+  "pr_id": "synth_bench_pr_0088",
+  "repo": "langchain-ai/langchain",
+  "pr_number": 10088,
+  "pr_title": "Benchmark synthetic change 88 (mock-eval aligned)",
+  "diff": "diff --git a/packages/bench_13/module_088.py b/packages/bench_13/module_088.py\n--- a/packages/bench_13/module_088.py\n+++ b/packages/bench_13/module_088.py\n@@ -1,3 +1,4 @@\n def worker_88():\n+    # synthetic bench 88\n     x = 10\n     return x\n",
+  "expected_comments": [
+    {
+      "file": "packages/bench_13/module_088.py",
+      "line": 1,
+      "category": "suggestion",
+      "severity": "low",
+      "description": "Ground truth aligned to mock LLM: suggestion-level finding at diff anchor."
+    }
+  ],
+  "expected_no_comments": []
+}

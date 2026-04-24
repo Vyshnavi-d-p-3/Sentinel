@@ -120,8 +120,10 @@ def _ensure_mock_mode(force_mock: bool) -> None:
 
 async def _run_one_fixture(orchestrator: Any, fixture: Fixture) -> tuple[list[EvalComment], dict[str, Any]]:
     """Run a single fixture and return (predicted comments, run metadata)."""
+    # Distinct ``repo_id`` per fixture so token budgets do not stack on one
+    # synthetic "eval-harness" ID during large batched eval runs.
     result, reason = await orchestrator.review_pr(
-        repo_id="eval-harness",
+        repo_id=f"eval:{fixture.pr_id}",
         pr_number=fixture.pr_number,
         raw_diff=fixture.diff,
         pr_title=fixture.pr_title,
@@ -131,7 +133,8 @@ async def _run_one_fixture(orchestrator: Any, fixture: Fixture) -> tuple[list[Ev
         logger.warning("Fixture %s skipped: %s", fixture.pr_id, reason)
         return [], {"skipped": True, "reason": reason or "unknown"}
 
-    comments_payload = [c.model_dump() for c in result.output.comments]
+    # ``mode="json"`` so enums become plain strings (matches ``comments_from_payload``).
+    comments_payload = [c.model_dump(mode="json") for c in result.output.comments]
     metadata = {
         "skipped": False,
         "diff_hash": result.diff_hash,

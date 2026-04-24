@@ -1,0 +1,181 @@
+{
+  "strict": {
+    "overall": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "per_category": {
+      "security": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "bug": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "performance": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "style": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "suggestion": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 100,
+        "false_positives": 0,
+        "false_negatives": 0
+      }
+    },
+    "total_prs": 100
+  },
+  "soft": {
+    "overall": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "per_category": {
+      "security": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "bug": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "performance": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "style": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0
+      },
+      "suggestion": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "true_positives": 100,
+        "false_positives": 0,
+        "false_negatives": 0
+      }
+    },
+    "total_prs": 100
+  },
+  "clean_pr": {
+    "total_clean_prs": 0,
+    "clean_prs_with_any_comment": 0,
+    "total_false_positive_comments": 0,
+    "clean_pr_fp_rate": 0.0
+  },
+  "confidence_calibration": [
+    {
+      "bucket_lo": 0.0,
+      "bucket_hi": 0.1,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    },
+    {
+      "bucket_lo": 0.1,
+      "bucket_hi": 0.2,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    },
+    {
+      "bucket_lo": 0.2,
+      "bucket_hi": 0.3,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    },
+    {
+      "bucket_lo": 0.3,
+      "bucket_hi": 0.4,
+      "total": 100,
+      "true_positives": 100,
+      "accuracy": 1.0
+    },
+    {
+      "bucket_lo": 0.4,
+      "bucket_hi": 0.5,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    },
+    {
+      "bucket_lo": 0.5,
+      "bucket_hi": 0.6,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    },
+    {
+      "bucket_lo": 0.6,
+      "bucket_hi": 0.7,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    },
+    {
+      "bucket_lo": 0.7,
+      "bucket_hi": 0.8,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    },
+    {
+      "bucket_lo": 0.8,
+      "bucket_hi": 0.9,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    },
+    {
+      "bucket_lo": 0.9,
+      "bucket_hi": 1.0,
+      "total": 0,
+      "true_positives": 0,
+      "accuracy": 0.0
+    }
+  ],
+  "total_prs": 100
+}

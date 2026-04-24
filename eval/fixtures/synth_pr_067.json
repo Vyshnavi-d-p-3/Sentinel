@@ -1,0 +1,17 @@
+{
+  "pr_id": "synth_bench_pr_0067",
+  "repo": "pallets/flask",
+  "pr_number": 10067,
+  "pr_title": "Benchmark synthetic change 67 (mock-eval aligned)",
+  "diff": "diff --git a/packages/bench_17/module_067.py b/packages/bench_17/module_067.py\n--- a/packages/bench_17/module_067.py\n+++ b/packages/bench_17/module_067.py\n@@ -1,3 +1,4 @@\n def worker_67():\n+    # synthetic bench 67\n     x = 2\n     return x\n",
+  "expected_comments": [
+    {
+      "file": "packages/bench_17/module_067.py",
+      "line": 1,
+      "category": "suggestion",
+      "severity": "low",
+      "description": "Ground truth aligned to mock LLM: suggestion-level finding at diff anchor."
+    }
+  ],
+  "expected_no_comments": []
+}

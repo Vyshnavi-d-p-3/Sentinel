@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 *A GitHub App that reviews pull requests using hybrid retrieval + LLM synthesis,*
-*backed by a 100-PR hand-labeled evaluation harness with per-category P/R/F1.*
+*backed by a 100-PR evaluation harness (mockCI‑aligned fixtures + legacy hand examples) with per-category P/R/F1.*
 
 [Architecture](#architecture) · [Quick Start](#quick-start) · [Evaluation](#evaluation-methodology) · [Security](#security) · [Deployment](#deployment) · [Tech Stack](#tech-stack) · [Roadmap](#roadmap)
 
@@ -275,9 +275,9 @@ sentinel/
 - [x] Alembic migrations
 - [x] Structured JSON logging + request correlation
 - [x] Operator docs (SECURITY, CONTRIBUTING, .env.example)
-- [ ] Eval dataset — labeling final 100 PRs
-- [ ] Deploy: Railway + Vercel + Neon (one-click templates)
-- [ ] Blog post + demo video
+- [x] Eval dataset — 100 **mockCI-aligned** JSON fixtures (see `eval/scripts/generate_synthetic_fixtures.py`; hand-curated examples in `eval/fixtures/legacy/`)
+- [x] Deploy: documented path (Neon/Supabase + Railway/Fly + Vercel) — [`docs/DEPLOY.md`](docs/DEPLOY.md)
+- [x] Blog + demo: publishable **drafts** in-repo — [`docs/BLOG_DRAFT.md`](docs/BLOG_DRAFT.md), [`docs/VIDEO_OUTLINE.md`](docs/VIDEO_OUTLINE.md) (record & post externally)
 
 ## License
 

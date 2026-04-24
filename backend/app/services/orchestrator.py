@@ -18,6 +18,7 @@ import logging
 import time
 from dataclasses import dataclass
 
+from app.config import settings
 from app.models.review_output import (
     CrossReferenceOutput,
     FileReviewOutput,
@@ -39,7 +40,7 @@ from app.prompts.review_prompts import (
     review_prompt_template_hash,
 )
 from app.retrieval.hybrid import HybridRetriever
-from app.services.cost_guard import CostGuard
+from app.services.cost_guard import CostGuard, CostGuardConfig
 from app.services.diff_parser import DiffParser, FileChange, ParsedDiff
 from app.services.llm_gateway import LLMGateway, LLMGatewayError
 from app.services.orchestrator_types import OrchestratorResult, PipelineStepUsage
@@ -73,7 +74,14 @@ class ReviewOrchestrator:
         retriever: HybridRetriever | None = None,
     ):
         self.diff_parser = diff_parser or DiffParser()
-        self.cost_guard = cost_guard or CostGuard()
+        self.cost_guard = cost_guard or CostGuard(
+            CostGuardConfig(
+                daily_token_budget=int(settings.daily_token_budget),
+                per_pr_token_cap=int(settings.per_pr_token_cap),
+                circuit_breaker_threshold=int(settings.circuit_breaker_threshold),
+                circuit_breaker_window_sec=int(settings.circuit_breaker_window_sec),
+            )
+        )
         self.llm_gateway = llm_gateway or LLMGateway()
         # Retrieval is optional. If no retriever is wired (e.g. unit tests with
         # no DB), step 2 falls back to diff-only context.
