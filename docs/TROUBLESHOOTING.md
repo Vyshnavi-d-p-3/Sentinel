@@ -18,6 +18,12 @@ Work through this in order:
 
 5. **Still stuck** — Paste the **first error** from the terminal where you started the backend and from `dashboard` (or from `npm run dev` at repo root).
 
+## Home page is 404 in `next dev` (EMFILE / “too many open files, watch”)
+
+On **macOS**, the default file watcher can hit the `ulimit` and **fail to see `app/page.tsx`**, so `/` renders as **404** while `/health` still proxies fine. The terminal shows `Watchpack Error (watcher): EMFILE`.
+
+**Fix:** The dashboard `npm run dev` script enables **polling** (`WATCHPACK_POLLING=true`) to avoid this. If you still see EMFILE, raise the limit for the shell: `ulimit -n 10240`, or use production mode: `npm run build && npm start`.
+
 ## Next.js dev server: HTTP 500, “missing required error components, refreshing…”
 
 This almost always means **Turbopack or a stale `.next` cache** left the dev server (`npm run dev`) in a bad state—not your application code.

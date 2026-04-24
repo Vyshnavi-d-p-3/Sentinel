@@ -41,7 +41,7 @@ src/
 ## Commands
 
 ```bash
-npm run dev        # dev server (Webpack; recommended)
+npm run dev        # dev server (Webpack + polling — avoids macOS EMFILE / bogus 404 on `/`)
 npm run dev:turbo  # optional Turbopack — if you get HTTP 500, use `dev` or `rm -rf .next`
 npm run build      # production build
 npm start          # production server (after build)
