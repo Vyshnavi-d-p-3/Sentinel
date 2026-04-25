@@ -43,6 +43,7 @@ from app.routers import (
     costs,
     eval_router,
     feedback,
+    health,
     prompts,
     repos,
     reviews,
@@ -153,6 +154,7 @@ app.include_router(eval_router.router, prefix="/api/v1/eval", tags=["eval"], dep
 app.include_router(costs.router, prefix="/api/v1/costs", tags=["costs"], dependencies=api_protected)
 app.include_router(prompts.router, prefix="/api/v1/prompts", tags=["prompts"], dependencies=api_protected)
 app.include_router(feedback.router, prefix="/api/v1/feedback", tags=["feedback"], dependencies=api_protected)
+app.include_router(health.router, tags=["health-intelligence"], dependencies=api_protected)
 app.include_router(config_router.router, prefix="/api/v1/config", tags=["config"], dependencies=api_protected)
 app.include_router(tests.router, tags=["tests"], dependencies=api_protected)
 
