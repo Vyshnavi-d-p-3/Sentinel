@@ -1,0 +1,18 @@
+{
+  "pr_id": "nextjs_pr_57967",
+  "repo": "vercel/next.js",
+  "pr_number": 57967,
+  "pr_title": "Auto-labeled example 18 (suggestion)",
+  "is_clean": false,
+  "diff": "diff --git a/app/list/page.tsx b/app/list/page.tsx\n--- a/app/list/page.tsx\n+++ b/app/list/page.tsx\n@@ -1,2 +1,4 @@\n export default function L({ items }: { items: {id:number}[] }) {\n-  return <ul>{items.map((x,i) => <li key={i}>{x.id}</li>)}</ul>\n+  return <ul>{items.map((x,i) => <li key={i}>{x.id}</li>)}</ul>\n }\n",
+  "expected_comments": [
+    {
+      "file": "app/list/page.tsx",
+      "line": 2,
+      "category": "suggestion",
+      "severity": "low",
+      "description": "Index as React key can confuse reconciliation when the list reorders; prefer stable id."
+    }
+  ],
+  "expected_no_comments": []
+}

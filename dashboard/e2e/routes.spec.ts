@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { installDashboardApiStubs } from "./api-mocks";
 
 const ROUTES: { path: string; heading: string | RegExp }[] = [
   { path: "/", heading: "Sentinel" },
@@ -13,6 +14,7 @@ const ROUTES: { path: string; heading: string | RegExp }[] = [
 
 for (const { path, heading } of ROUTES) {
   test(`${path} renders primary heading (no full reload errors)`, async ({ page }) => {
+    await installDashboardApiStubs(page);
     const response = await page.goto(path);
     expect(response, `navigation to ${path}`).toBeTruthy();
     expect(response!.ok() || response!.status() === 304, `HTTP ${response!.status()}`).toBeTruthy();
@@ -23,6 +25,7 @@ for (const { path, heading } of ROUTES) {
 }
 
 test("Eval page: strict/soft controls exist when eval API succeeds", async ({ page }) => {
+  await installDashboardApiStubs(page);
   await page.route("**/api/v1/eval/runs**", async (route) => {
     const url = route.request().url();
     if (url.includes("/latest")) {
@@ -121,6 +124,7 @@ test("Eval page: strict/soft controls exist when eval API succeeds", async ({ pa
 });
 
 test("Reviews page: filter controls and table surface", async ({ page }) => {
+  await installDashboardApiStubs(page);
   await page.route("**/api/v1/reviews**", async (route) => {
     await route.fulfill({
       status: 200,

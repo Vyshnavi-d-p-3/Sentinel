@@ -1,0 +1,18 @@
+{
+  "pr_id": "nextjs_pr_58002",
+  "repo": "vercel/next.js",
+  "pr_number": 58002,
+  "pr_title": "Auto-labeled example 3 (security)",
+  "is_clean": false,
+  "diff": "diff --git a/app/middleware.ts b/app/middleware.ts\n--- a/app/middleware.ts\n+++ b/app/middleware.ts\n@@ -1,2 +1,4 @@\n+const tok = process.env.AUTH_TOKEN;\n+export const config = { matcher: [\"/:path*\"] };\n",
+  "expected_comments": [
+    {
+      "file": "app/middleware.ts",
+      "line": 1,
+      "category": "security",
+      "severity": "high",
+      "description": "Auth token from env exposed in client bundle if this file is not server-only; verify 'use server' or placement."
+    }
+  ],
+  "expected_no_comments": []
+}

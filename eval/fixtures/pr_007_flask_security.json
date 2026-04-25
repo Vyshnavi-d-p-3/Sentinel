@@ -1,0 +1,18 @@
+{
+  "pr_id": "flask_pr_5201",
+  "repo": "pallets/flask",
+  "pr_number": 5201,
+  "pr_title": "Auto-labeled example 2 (security)",
+  "is_clean": false,
+  "diff": "diff --git a/src/flask/sessions.py b/src/flask/sessions.py\n--- a/src/flask/sessions.py\n+++ b/src/flask/sessions.py\n@@ -10,2 +10,4 @@\n+def get_sid():\n+    return request.cookies.get('session') or '0' * 8\n",
+  "expected_comments": [
+    {
+      "file": "src/flask/sessions.py",
+      "line": 12,
+      "category": "security",
+      "severity": "high",
+      "description": "Predictable default session id weakens session fixation protections."
+    }
+  ],
+  "expected_no_comments": []
+}

@@ -1,0 +1,10 @@
+{
+  "pr_id": "nextjs_pr_20006",
+  "repo": "vercel/next.js",
+  "pr_number": 20006,
+  "pr_title": "Chore: minor cleanup 6",
+  "is_clean": true,
+  "diff": "diff --git a/src/nextjs/clean_006.py b/src/nextjs/clean_006.py\n--- a/src/nextjs/clean_006.py\n+++ b/src/nextjs/clean_006.py\n@@ -1,2 +1,2 @@\n-# Chore: minor cleanup 6\n+# tidied: 6\n pass\n",
+  "expected_comments": [],
+  "expected_no_comments": []
+}

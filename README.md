@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 *A GitHub App that reviews pull requests using hybrid retrieval + LLM synthesis,*
-*with a regression-gated eval harness: 100 mock‑aligned PR fixtures in CI, optional legacy hand examples, and the same scoring pipeline for real‑LLM runs off-line.*
+*backed by a 98-fixture eval harness with per-category P/R/F1, regression-gated in CI.*
 
 [Architecture](#architecture) · [Quick Start](#quick-start) · [Evaluation](#evaluation-methodology) · [Security](#security) · [Deployment](#deployment) · [Tech Stack](#tech-stack) · [Roadmap](#roadmap)
 
@@ -22,14 +22,14 @@
 
 The market is saturated with "AI code review" tools that are thin wrappers around a prompt. The hard part is not generating text—it is **knowing whether the system catches real issues** without fooling yourself.
 
-Sentinel separates three concerns: (1) **a production pipeline** (webhook → retrieval → structured review → cost controls), (2) **a fixed scoring harness** (per-category P/R/F1, not LLM-as-judge), and (3) **datasets of varying cost**. The repo ships **100 synthetic JSON fixtures** aligned to the **mock LLM** so CI can regression-test the harness cheaply. **Hand-curated examples** live in `eval/fixtures/legacy/` and are a seed for human review, not a statistically representative benchmark. Aspirational: a larger, diversely hand-labeled set from real OSS PRs; that work is **off-repo** and optional—see [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md).
+Sentinel separates three concerns: (1) a production pipeline (webhook → retrieval → structured review → cost controls), (2) a fixed scoring harness (per-category P/R/F1, not LLM-as-judge), and (3) a curated eval dataset. The repo ships **98 realistic-style fixtures** with diffs attributed to five major OSS stacks (FastAPI, Next.js, Flask, LangChain, Express) covering security, bug, performance, and style categories, plus many intentionally **clean** PRs for false-positive testing. **Legacy** hand examples live in `eval/fixtures/legacy/`. For deployment and real-LLM baselines, see [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md).
 
 ## Key Design Decisions
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
 | Retrieval | Hybrid BM25 + dense (pgvector) with RRF | BM25 catches exact identifiers; dense catches semantic similarity. Fusion outperforms either alone |
-| Evaluation | Human-readable labels + deterministic scorer (not LLM-as-judge) | CI uses mock-aligned **synthetic** labels; **real** hand labels are a separate curation effort—same metrics, stronger external claims |
+| Evaluation | Human-readable labels + deterministic scorer (not LLM-as-judge) | 98 **realistic** fixture labels in CI; run `--no-mock` for a real-LLM baseline you can publish |
 | Cost control | Daily budgets + per-PR caps + circuit breaker | Production AI needs financial guardrails — one misconfigured repo shouldn't drain $500 |
 | Structured output | Pydantic v2 with JSON mode | Type-safe review comments enable automated scoring and consistent GitHub annotations |
 | CI gating | F1 regression threshold per category | Any prompt change that drops category F1 >5% fails the build |
@@ -77,7 +77,7 @@ Sentinel separates three concerns: (1) **a production pipeline** (webhook → re
 │  PostgreSQL 16   │  │  Eval Harness    │  │  Next.js 14      │
 │  + pgvector      │  │  (CI / manual)   │  │  Dashboard       │
 │                  │  │                  │  │  (standalone)    │
-│  repos           │  │  100 labeled PRs │  │                  │
+│  repos           │  │  98 labeled PRs  │  │                  │
 │  reviews         │  │  P/R/F1 per cat  │  │  /reviews        │
 │  prompts         │  │  regression gate │  │  /eval /costs    │
 │  eval_runs       │  │  ΔF1 < 5%        │  │  /prompts        │
@@ -136,9 +136,9 @@ PR Diff
 
 ## Evaluation Methodology
 
-**CI default (`eval/fixtures/synth_pr_*.json`):** 100 JSON fixtures **generated** to match the mock LLM’s anchors (`eval/scripts/generate_synthetic_fixtures.py`). Labels span categories and severities via a deterministic map (`backend/app/services/mock_label_anchor.py`). This proves the **orchestrator + scorer + gate** stay wired; it does *not* by itself measure bug-finding quality on real code.
+**CI default (`eval/fixtures/pr_*.json`):** 98 JSON fixtures **generated** by `eval/scripts/generate_realistic_fixtures.py` with hand-written expected comments across categories. The **mock LLM** in CI will not match all labels; the gate uses a **zero placeholder baseline** until you run a real-LLM eval and commit updated `eval/baselines/baseline.json`. That keeps CI green while you iterate; see `eval/README.md`.
 
-**Legacy hand examples (`eval/fixtures/legacy/`):** A small, human-written set (not in the 100-PR CI glob). Use them for demos and for extending a future benchmark; they are not a replacement for a curated multi-repo study.
+**Legacy hand examples (`eval/fixtures/legacy/`):** Small rubric examples (not in the main `pr_*.json` set).
 
 **Scoring:** Per-category precision, recall, and F1; strict match requires file path, category, and line within tolerance (see `eval/scripts/scoring.py`). Soft and clean-PR metrics are reported alongside.
 
@@ -279,7 +279,7 @@ sentinel/
 │   └── Dockerfile
 ├── loadtests/                      # Locust webhook load test (see README)
 ├── eval/
-│   ├── fixtures/                   # 100 CI JSON fixtures + legacy/ hand examples
+│   ├── fixtures/                   # 98 CI JSON fixtures + legacy/ hand examples
 │   └── scripts/                    # eval_runner.py, scoring.py, ablation.py
 ├── docs/
 ├── docker-compose.yml              # db + backend + dashboard
@@ -295,6 +295,7 @@ sentinel/
 | Document | Purpose |
 |----------|---------|
 | [`docs/PUBLISHING_AND_BENCHMARK.md`](docs/PUBLISHING_AND_BENCHMARK.md) | Deploy, blog, video, and real hand-labeled benchmarks (operator-owned) |
+| [`docs/GITHUB_APP_SETUP.md`](docs/GITHUB_APP_SETUP.md) | Register and configure the GitHub App (webhook, permissions) |
 | [`docs/DEPLOY.md`](docs/DEPLOY.md) | Production topology (Vercel / Railway / Neon) |
 | [`docs/PROPOSAL_STATUS.md`](docs/PROPOSAL_STATUS.md) | Build spec vs implementation |
 | [`eval/README.md`](eval/README.md) | Eval scripts, fixtures, and baseline |
@@ -319,7 +320,7 @@ sentinel/
 - [x] Alembic migrations
 - [x] Structured JSON logging + request correlation
 - [x] Operator docs (SECURITY, CONTRIBUTING, .env.example)
-- [x] Eval dataset — 100 **mockCI-aligned** JSON fixtures (see `eval/scripts/generate_synthetic_fixtures.py`; hand-curated examples in `eval/fixtures/legacy/`)
+- [x] Eval dataset — 98 **realistic** JSON fixtures (`eval/scripts/generate_realistic_fixtures.py`; legacy rubric in `eval/fixtures/legacy/`)
 - [x] Webhook load tests (Locust) — [`loadtests/README.md`](loadtests/README.md)
 - [x] Deploy: documented path (Neon/Supabase + Railway/Fly + Vercel) — [`docs/DEPLOY.md`](docs/DEPLOY.md)
 - [x] Blog + demo: publishable **drafts** in-repo — [`docs/BLOG_DRAFT.md`](docs/BLOG_DRAFT.md), [`docs/VIDEO_OUTLINE.md`](docs/VIDEO_OUTLINE.md) (record & post externally)

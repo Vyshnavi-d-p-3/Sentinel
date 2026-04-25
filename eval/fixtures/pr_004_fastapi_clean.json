@@ -1,0 +1,16 @@
+{
+  "pr_id": "fastapi_pr_11100",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 11100,
+  "pr_title": "Update type hints to use modern union syntax",
+  "is_clean": true,
+  "diff": "diff --git a/app/models/user.py b/app/models/user.py\n--- a/app/models/user.py\n+++ b/app/models/user.py\n@@ -1,8 +1,8 @@\n                 -from typing import Optional, List\n                 +from __future__ import annotations\n                  from pydantic import BaseModel\n\n                  class User(BaseModel):\n                    name: str\n                 -  email: Optional[str] = None\n                 -  roles: List[str] = []\n                 +  email: str | None = None\n                 +  roles: list[str] = []\n",
+  "expected_comments": [],
+  "expected_no_comments": [
+    {
+      "file": "app/models/user.py",
+      "line": 6,
+      "reason": "PEP 604 union syntax is preferred on Python 3.10+."
+    }
+  ]
+}

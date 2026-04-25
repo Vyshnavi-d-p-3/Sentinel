@@ -91,7 +91,7 @@ def load_fixtures(fixture_dir: Path) -> list[Fixture]:
 
         expected = comments_from_payload(payload.get("expected_comments", []))
         not_expected = comments_from_payload(payload.get("expected_no_comments", []))
-        is_clean = bool(payload.get("clean_pr")) or (
+        is_clean = bool(payload.get("is_clean") or payload.get("clean_pr")) or (
             len(expected) == 0 and len(not_expected) == 0 and bool(payload.get("expected_clean", False))
         )
 

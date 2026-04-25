@@ -1,0 +1,10 @@
+{
+  "pr_id": "express_pr_20034",
+  "repo": "expressjs/express",
+  "pr_number": 20034,
+  "pr_title": "Chore: minor cleanup 34",
+  "is_clean": true,
+  "diff": "diff --git a/src/express/clean_034.py b/src/express/clean_034.py\n--- a/src/express/clean_034.py\n+++ b/src/express/clean_034.py\n@@ -1,2 +1,2 @@\n-# Chore: minor cleanup 34\n+# tidied: 34\n pass\n",
+  "expected_comments": [],
+  "expected_no_comments": []
+}

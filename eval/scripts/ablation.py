@@ -94,12 +94,14 @@ def load_fixtures(fixture_dir: Path) -> list[dict[str, Any]]:
             "diff": diff,
             "expected_comments": comments_from_payload(payload.get("expected_comments", [])),
             "expected_no_comments": comments_from_payload(payload.get("expected_no_comments", [])),
-            "is_clean_pr": bool(payload.get("clean_pr"))
+            "is_clean_pr": (
+                bool(payload.get("is_clean") or payload.get("clean_pr"))
                 or (
                     not payload.get("expected_comments")
                     and not payload.get("expected_no_comments")
                     and bool(payload.get("expected_clean", False))
-                ),
+                )
+            ),
             "context_files": dict(payload.get("context_files") or {}),
         })
     logger.info("Loaded %d fixtures from %s", len(out), fixture_dir)

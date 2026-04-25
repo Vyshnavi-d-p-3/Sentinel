@@ -1,0 +1,18 @@
+{
+  "pr_id": "fastapi_pr_10924",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 10924,
+  "pr_title": "Auto-labeled example 5 (bug)",
+  "is_clean": false,
+  "diff": "diff --git a/app/api/routes/items.py b/app/api/routes/items.py\n--- a/app/api/routes/items.py\n+++ b/app/api/routes/items.py\n@@ -5,2 +5,6 @@\n+@router.get(\"/items/count\")\n+async def count_items(db: Session = Depends(get_sync_db)):\n+    return db.query(Item).count()\n",
+  "expected_comments": [
+    {
+      "file": "app/api/routes/items.py",
+      "line": 7,
+      "category": "bug",
+      "severity": "high",
+      "description": "Sync ORM work inside an async route can block the event loop; use AsyncSession or threadpool."
+    }
+  ],
+  "expected_no_comments": []
+}

@@ -1,0 +1,18 @@
+{
+  "pr_id": "langchain_pr_18403",
+  "repo": "langchain-ai/langchain",
+  "pr_number": 18403,
+  "pr_title": "Auto-labeled example 4 (security)",
+  "is_clean": false,
+  "diff": "diff --git a/libs/langchain/langchain/tools/http.py b/libs/langchain/langchain/tools/http.py\n--- a/libs/langchain/langchain/tools/http.py\n+++ b/libs/langchain/langchain/tools/http.py\n@@ -5,2 +5,5 @@\n+def fetch(url: str) -> str:\n+    return requests.get(url, verify=False).text\n",
+  "expected_comments": [
+    {
+      "file": "libs/langchain/langchain/tools/http.py",
+      "line": 6,
+      "category": "security",
+      "severity": "high",
+      "description": "Disabling TLS verification allows MITM; do not set verify=False in production."
+    }
+  ],
+  "expected_no_comments": []
+}

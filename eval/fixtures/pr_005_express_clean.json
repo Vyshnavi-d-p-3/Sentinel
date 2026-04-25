@@ -1,0 +1,16 @@
+{
+  "pr_id": "express_pr_5910",
+  "repo": "expressjs/express",
+  "pr_number": 5910,
+  "pr_title": "Update dependencies and fix lockfile",
+  "is_clean": true,
+  "diff": "diff --git a/lib/app-version.js b/lib/app-version.js\n--- a/lib/app-version.js\n+++ b/lib/app-version.js\n@@ -1,3 +1,3 @@\n const semver = require('semver');\n-exports.VERSION = '1.3.8';\n+exports.VERSION = '1.3.9';\n",
+  "expected_comments": [],
+  "expected_no_comments": [
+    {
+      "file": "lib/app-version.js",
+      "line": 2,
+      "reason": "Patch-level version bump is routine maintenance."
+    }
+  ]
+}

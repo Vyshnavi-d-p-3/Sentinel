@@ -1,0 +1,18 @@
+{
+  "pr_id": "langchain_pr_18398",
+  "repo": "langchain-ai/langchain",
+  "pr_number": 18398,
+  "pr_title": "Auto-labeled example 19 (bug)",
+  "is_clean": false,
+  "diff": "diff --git a/libs/langchain/langchain/prompts/fstring.py b/libs/langchain/langchain/prompts/fstring.py\n--- a/libs/langchain/langchain/prompts/fstring.py\n+++ b/libs/langchain/langchain/prompts/fstring.py\n@@ -0,0 +1,2 @@\n+def fmt(t, **k):\n+    return t.format(**k)\n",
+  "expected_comments": [
+    {
+      "file": "libs/langchain/langchain/prompts/fstring.py",
+      "line": 2,
+      "category": "bug",
+      "severity": "medium",
+      "description": "str.format with untrusted keys enables format string injection; validate kwargs."
+    }
+  ],
+  "expected_no_comments": []
+}

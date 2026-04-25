@@ -1,0 +1,18 @@
+{
+  "pr_id": "flask_pr_5162",
+  "repo": "pallets/flask",
+  "pr_number": 5162,
+  "pr_title": "Auto-labeled example 13 (security)",
+  "is_clean": false,
+  "diff": "diff --git a/src/flask/blueprints.py b/src/flask/blueprints.py\n--- a/src/flask/blueprints.py\n+++ b/src/flask/blueprints.py\n@@ -8,2 +8,4 @@\n+@bp.get(\"/u/<name>\")\n+def u(name: str):\n+     return f\"<h1>{name}</h1>\"\n",
+  "expected_comments": [
+    {
+      "file": "src/flask/blueprints.py",
+      "line": 9,
+      "category": "security",
+      "severity": "high",
+      "description": "Unescaped user input in HTML enables XSS; use templates with auto-escaping."
+    }
+  ],
+  "expected_no_comments": []
+}

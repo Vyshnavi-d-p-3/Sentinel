@@ -1,0 +1,18 @@
+{
+  "pr_id": "flask_pr_5215",
+  "repo": "pallets/flask",
+  "pr_number": 5215,
+  "pr_title": "Auto-labeled example 6 (bug)",
+  "is_clean": false,
+  "diff": "diff --git a/src/flask/ctx.py b/src/flask/ctx.py\n--- a/src/flask/ctx.py\n+++ b/src/flask/ctx.py\n@@ -3,2 +3,4 @@\n+def buggy():\n+    return request.json['foo'] + request.json['bar']\n",
+  "expected_comments": [
+    {
+      "file": "src/flask/ctx.py",
+      "line": 4,
+      "category": "bug",
+      "severity": "medium",
+      "description": "KeyError risk if json keys are missing; use .get() with defaults."
+    }
+  ],
+  "expected_no_comments": []
+}

@@ -1,0 +1,18 @@
+{
+  "pr_id": "nextjs_pr_58211",
+  "repo": "vercel/next.js",
+  "pr_number": 58211,
+  "pr_title": "Auto-labeled example 12 (suggestion)",
+  "is_clean": false,
+  "diff": "diff --git a/app/components/ErrorBoundary.tsx b/app/components/ErrorBoundary.tsx\n--- a/app/components/ErrorBoundary.tsx\n+++ b/app/components/ErrorBoundary.tsx\n@@ -0,0 +1,6 @@\n+'use client'\n+import { Component } from 'react'\n+export class E extends Component {\n+  render() { if ((this.state as any).e) return null; return this.props.children; }\n+}\n",
+  "expected_comments": [
+    {
+      "file": "app/components/ErrorBoundary.tsx",
+      "line": 4,
+      "category": "suggestion",
+      "severity": "medium",
+      "description": "Consider logging errors in componentDidCatch and surfacing a fallback UI for operators."
+    }
+  ],
+  "expected_no_comments": []
+}

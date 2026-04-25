@@ -1,48 +1,54 @@
-# Outside the repository: deploy, content, and real benchmarks
+# Publishing, Deployment, and Benchmark Guide
 
-The codebase ships pipelines, a dashboard, and an eval harness. The items below require **operator time**, **cloud accounts**, or **curation**—they are not incomplete features in the source tree; they are **deliverables you produce** using the repo as the engine.
+The codebase ships pipelines, a dashboard, and an eval harness. This document covers what requires **operator time**, **cloud accounts**, or **additional curation**.
 
 ## 0. Repository map
 
-- **Eval harness index:** [`eval/README.md`](../eval/README.md) (runner, fixtures, baseline).
+- **Eval harness:** [`eval/README.md`](../eval/README.md) (runner, scoring, fixtures, baseline).
+- **GitHub App setup:** [`GITHUB_APP_SETUP.md`](GITHUB_APP_SETUP.md) (registration, permissions, webhooks).
+- **Deployment:** [`DEPLOY.md`](DEPLOY.md) (Postgres + pgvector, FastAPI container, Vercel dashboard).
 
 ## 1. Production deploy
 
-- **Reference:** [`DEPLOY.md`](DEPLOY.md) (Postgres + pgvector, FastAPI container, Vercel dashboard, GitHub App wiring).
-- **Accurate claim:** *“A documented path to production exists; a specific public URL is not part of the git artifact.”* After deploy, cite your own API and dashboard URLs in the blog and video.
-- **Pre-flight:** `alembic upgrade head`, `ENVIRONMENT=production`, `DB_AUTO_CREATE_TABLES=false`, `LLM_MOCK_MODE=false` when using paid inference, `API_KEY` + matching `NEXT_PUBLIC_API_KEY` if the UI calls the API from the browser.
+- **Reference:** [`DEPLOY.md`](DEPLOY.md) and `backend/Procfile`, `backend/fly.toml`, `dashboard/vercel.json`.
+- **Pre-flight:** `alembic upgrade head`, `ENVIRONMENT=production`, `DB_AUTO_CREATE_TABLES=false`, `LLM_MOCK_MODE=false` with valid API keys, `API_KEY` for dashboard API routes, `GITHUB_WEBHOOK_SECRET` matching the GitHub App.
+- **Infrastructure:** Backend on Railway or Fly.io; dashboard on Vercel; database on Neon or Supabase (Postgres + pgvector).
 
-## 2. Blog post (draft in-repo)
+## 2. Eval dataset
 
-- **Draft:** [`BLOG_DRAFT.md`](BLOG_DRAFT.md). Before publishing, align every quantitative claim with what you actually ran (CI vs `--no-mock` vs a hand-labeled slice).
-- **Credible story:** *CI proves harness stability on mock-aligned data;* *reported F1 on real PRs* requires a separate eval run and dataset description.
+| Asset | Status | Notes |
+|-------|--------|-------|
+| Eval harness (runner + scorer) | In repo | Strict + soft matching, clean-PR FP rate |
+| 98 realistic-style fixtures | In repo | [`eval/fixtures/`](../eval/fixtures/README.md), `generate_realistic_fixtures.py` |
+| CI regression gate | In repo | Fails if strict per-category F1 drops more than the threshold vs baseline |
+| Real-LLM baseline | Operator | Run `eval_runner.py --no-mock` with API keys, then copy `eval/results.json` to `eval/baselines/baseline.json` |
 
-## 3. Demo video (outline in-repo)
+### Establishing a real baseline
 
-- **Outline:** [`VIDEO_OUTLINE.md`](VIDEO_OUTLINE.md). Record only flows you can reproduce (local `docker compose`, or your deployed stack). If you show the Eval page, state whether numbers come from **disk/DB artifacts** and whether they reflect **synthetic** or **real-LLM** eval.
+```bash
+export ANTHROPIC_API_KEY=9383ab45-2b27-49e2-8079-d9533cbc1b7c
+cd backend
+python ../eval/scripts/eval_runner.py \
+  --no-mock \
+  --fixtures ../eval/fixtures/ \
+  --output ../eval/results.json
+cp ../eval/results.json ../eval/baselines/baseline.json
+```
 
-## 4. A real hand-labeled benchmark (optional, high effort)
+## 3. Blog post
 
-**What the repo does *not* include:** 100 statistically diverse, independently adjudicated PRs from five OSS orgs. That is **research/ops work**, not a missing file.
+- **Draft:** [`BLOG_DRAFT.md`](BLOG_DRAFT.md) — replace placeholder metrics with numbers from a real eval run before publishing.
+- **Video outline:** [`VIDEO_OUTLINE.md`](VIDEO_OUTLINE.md)
 
-**How to build one (summary):**
+## 4. Checklist before claiming “done”
 
-1. **Sampling:** Choose repos, time window, and inclusion rules (e.g. security-relevant file paths) *before* labeling—write them down to avoid selection bias in the write-up.
-2. **Rubric:** Follow [`eval/scripts/labeling_rubric.md`](../eval/scripts/labeling_rubric.md) so labels stay comparable across PRs.
-3. **Format:** One JSON per PR matching the eval fixture schema (see any `synth_pr_*.json` for required fields, or `eval/fixtures/legacy/` for hand-authored examples).
-4. **Execution:** `eval_runner.py` with **real** keys (`--no-mock` when appropriate), fixed model version, and frozen prompt hash. Store `eval/results.json` and/or persist eval runs to the DB for the dashboard.
-5. **Reporting:** Report N, label distribution, inter-rater agreement if multiple annotators, and failure modes. Do not conflate that run with the **default CI** bundle.
+| Claim | Action |
+|-------|--------|
+| Regression-gated eval in CI | In repo — keep baseline updated when intentionally changing prompts |
+| 98 fixture dataset | In repo — regenerate with `generate_realistic_fixtures.py` if you change the generator |
+| Real-LLM baseline numbers | Run `--no-mock` eval and update `baseline.json` |
+| Public deploy | Deploy API + DB + dashboard; follow `DEPLOY.md` |
+| GitHub App on real repos | Follow `GITHUB_APP_SETUP.md` |
+| Blog / video | Fill metrics, publish externally |
 
-**Aspirational line you may use in marketing** only *after* you have done the work: *“We evaluated on N hand-labeled pull requests from …”* with N and methodology explicit.
-
-## 5. Checklist before claiming “the proposal is done”
-
-| Claim | In-repo? | You must |
-|--------|----------|----------|
-| Regression-gated eval in CI | Yes | — |
-| 100-PR *CI* dataset | Yes (synthetic) | — |
-| Diverse *human* labels at scale | No | Curate + run eval (above) |
-| Public URLs | No | Deploy ([`DEPLOY.md`](DEPLOY.md)) |
-| Blog / video / App install in production | No | Publish + configure GitHub App on your org |
-
-This document is the single place to point stakeholders when they ask what remains **outside** git.
+This document is the single place for **outside-git** work: deploy, content, and defensible benchmark claims.

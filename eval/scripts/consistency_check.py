@@ -103,11 +103,13 @@ def check_fixture(path: Path, report: CheckReport) -> None:
         report.errors.append(f"{source}: expected_comments must be a list")
         return
 
-    is_clean = bool(payload.get("clean_pr", False))
+    is_clean = bool(payload.get("is_clean", False) or payload.get("clean_pr", False))
     if is_clean:
         report.clean_pr_count += 1
         if expected:
-            report.errors.append(f"{source}: clean_pr=true but expected_comments is non-empty")
+            report.errors.append(
+                f"{source}: is_clean/clean_pr=true but expected_comments is non-empty"
+            )
             return
 
     fixture_ok = True

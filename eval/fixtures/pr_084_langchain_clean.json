@@ -1,0 +1,10 @@
+{
+  "pr_id": "langchain_pr_20058",
+  "repo": "langchain-ai/langchain",
+  "pr_number": 20058,
+  "pr_title": "Chore: minor cleanup 58",
+  "is_clean": true,
+  "diff": "diff --git a/src/langchain/clean_058.py b/src/langchain/clean_058.py\n--- a/src/langchain/clean_058.py\n+++ b/src/langchain/clean_058.py\n@@ -1,2 +1,2 @@\n-# Chore: minor cleanup 58\n+# tidied: 58\n pass\n",
+  "expected_comments": [],
+  "expected_no_comments": []
+}

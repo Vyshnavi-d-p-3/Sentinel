@@ -44,7 +44,7 @@ def test_no_llm_keys_and_no_mock_mode_errors_in_production() -> None:
 def test_production_with_keys_and_secret_passes_with_warnings() -> None:
     s = _settings(
         environment="production",
-        anthropic_api_key="sk-test",
+        anthropic_api_key="9383ab45-2b27-49e2-8079-d9533cbc1b7c",
         llm_mock_mode=False,
         db_auto_create_tables=True,
         api_key="",
@@ -59,7 +59,7 @@ def test_production_with_keys_and_secret_passes_with_warnings() -> None:
 def test_production_with_http_origin_warns() -> None:
     s = _settings(
         environment="production",
-        anthropic_api_key="sk-test",
+        anthropic_api_key="9383ab45-2b27-49e2-8079-d9533cbc1b7c",
         llm_mock_mode=False,
         api_key="real-key",
         cors_origins=["http://dashboard.example.com"],
@@ -72,7 +72,7 @@ def test_production_with_http_origin_warns() -> None:
 def test_eval_trigger_enabled_warns_in_production() -> None:
     s = _settings(
         environment="production",
-        anthropic_api_key="sk-test",
+        anthropic_api_key="9383ab45-2b27-49e2-8079-d9533cbc1b7c",
         llm_mock_mode=False,
         api_key="k",
         eval_trigger_enabled=True,

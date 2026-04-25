@@ -1,0 +1,18 @@
+{
+  "pr_id": "express_pr_5804",
+  "repo": "expressjs/express",
+  "pr_number": 5804,
+  "pr_title": "Auto-labeled example 15 (performance)",
+  "is_clean": false,
+  "diff": "diff --git a/lib/utils/redos.js b/lib/utils/redos.js\n--- a/lib/utils/redos.js\n+++ b/lib/utils/redos.js\n@@ -0,0 +1,2 @@\n+const re = /^(a+)+$/;\n+export const ok = (s) => re.test(s);\n",
+  "expected_comments": [
+    {
+      "file": "lib/utils/redos.js",
+      "line": 1,
+      "category": "performance",
+      "severity": "medium",
+      "description": "Catastrophic backtracking risk (ReDoS) on some inputs; avoid nested quantifiers on user data."
+    }
+  ],
+  "expected_no_comments": []
+}

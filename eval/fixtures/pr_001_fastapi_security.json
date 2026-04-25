@@ -1,0 +1,18 @@
+{
+  "pr_id": "fastapi_pr_10842",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 10842,
+  "pr_title": "Add user search endpoint with filtering",
+  "is_clean": false,
+  "diff": "diff --git a/app/api/routes/users.py b/app/api/routes/users.py\n--- a/app/api/routes/users.py\n+++ b/app/api/routes/users.py\n@@ -1,8 +1,12 @@\n                 -from fastapi import APIRouter, Depends\n                 +from fastapi import APIRouter, Depends, Query\n                  from sqlalchemy.ext.asyncio import AsyncSession\n                 +from sqlalchemy import text\n                  from app.db.session import get_db\n\n                  router = APIRouter()\n\n                 +@router.get(\"/users/search\")\n                 +async def search_users(q: str = Query(...), db: AsyncSession = Depends(get_db)):\n                 +    result = await db.execute(text(f\"SELECT * FROM users WHERE name LIKE '%{q}%'\"))\n                 +    return result.mappings().all()\n",
+  "expected_comments": [
+    {
+      "file": "app/api/routes/users.py",
+      "line": 10,
+      "category": "security",
+      "severity": "critical",
+      "description": "SQL injection via f-string interpolation of user input into raw SQL query."
+    }
+  ],
+  "expected_no_comments": []
+}

@@ -1,0 +1,18 @@
+{
+  "pr_id": "langchain_pr_18403",
+  "repo": "langchain-ai/langchain",
+  "pr_number": 18403,
+  "pr_title": "Auto-labeled example 14 (performance)",
+  "is_clean": false,
+  "diff": "diff --git a/libs/langchain/langchain/retrievers/simple.py b/libs/langchain/langchain/retrievers/simple.py\n--- a/libs/langchain/langchain/retrievers/simple.py\n+++ b/libs/langchain/langchain/retrievers/simple.py\n@@ -3,2 +3,4 @@\n+    scores = [dot(q, d) for d in matrix]\n+    return sorted(range(len(scores)), key=lambda i: -scores[i])[:k]\n",
+  "expected_comments": [
+    {
+      "file": "libs/langchain/langchain/retrievers/simple.py",
+      "line": 4,
+      "category": "performance",
+      "severity": "medium",
+      "description": "O(n) dot against full matrix; consider ANN index for large collections."
+    }
+  ],
+  "expected_no_comments": []
+}

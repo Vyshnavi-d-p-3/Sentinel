@@ -1,0 +1,18 @@
+{
+  "pr_id": "fastapi_pr_10865",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 10865,
+  "pr_title": "Auto-labeled example 16 (security)",
+  "is_clean": false,
+  "diff": "diff --git a/app/main.py b/app/main.py\n--- a/app/main.py\n+++ b/app/main.py\n@@ -2,2 +2,5 @@\n+app.add_middleware(\n+  CORSMiddleware, allow_origins=['*'], allow_credentials=True, allow_methods=['*'],\n+)\n",
+  "expected_comments": [
+    {
+      "file": "app/main.py",
+      "line": 3,
+      "category": "security",
+      "severity": "critical",
+      "description": "Wildcard CORS with credentials is a dangerous default; restrict origins in production."
+    }
+  ],
+  "expected_no_comments": []
+}

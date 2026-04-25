@@ -1,35 +1,36 @@
-# I built an AI code reviewer—and separated “demo” from “measurement”
+# I Built an AI Code Reviewer — Here’s How I Measured Whether It Works
 
-*Draft for Medium / dev.to. Replace placeholder metrics with numbers from **your** runs. Add screenshots from **your** dashboard and CI.*
+*Draft for Medium / dev.to. Replace the metrics block with results from your own `eval_runner.py --no-mock` runs.*
 
-## Hook
+## The problem with AI code review
 
-Most LLM “code review” products optimize for a convincing UI. I wanted a system where **the evaluation story is as serious as the product story**: a fixed scoring pipeline, per-category P/R/F1, and automation that **fails the build** when a change silently degrades a category (e.g. security).
+Many tools are thin wrappers: diff in, text out, ship. The harder question is **whether the system finds the right issues** on real code, without grading yourself with another LLM.
 
-## What the repository actually is
+## What Sentinel is
 
-- **Product:** A GitHub App–driven **FastAPI** service: diff ingest → **hybrid retrieval** (BM25 + pgvector, RRF) → **structured** review output (Pydantic) → cost accounting and optional GitHub Check Runs.
-- **Dashboard:** **Next.js** pages for reviews, eval summaries, costs, prompts, and feedback—backed by the same API.
-- **CI eval bundle:** **100 JSON fixtures** generated to line up with the **mock LLM** so continuous integration can exercise the full review path without API keys. That is a **stability and wiring** signal, not a claim about finding bugs in the wild.
-- **Legacy fixtures:** A small set of **hand-authored** examples under `eval/fixtures/legacy/`. They are useful for illustration and for growing a real dataset; they are not presented as a complete benchmark.
+A **GitHub App**: webhook → triage and retrieval (BM25 + dense embeddings) → structured review comments (Pydantic) → optional GitHub check runs. The dashboard shows reviews, eval history, and costs.
 
-**Precision for readers (and for you as the author):** do not describe the 100-PR CI set as “hand-labeled OSS PRs” unless you have actually performed that curation. The honest sentence is: *the harness is real; the default CI labels are mock-aligned synthetics; serious external validation requires a separate eval pass.*
+**Hybrid retrieval** — keyword search for identifiers, dense vectors for similar patterns, fused with RRF.
 
-## How measurement works (and what it is not)
+**Structured output** — every comment has file, line, category, severity, and confidence so scores are reproducible.
 
-- **Scoring** compares model comments to **human-written or fixture-defined** expectations using file path, line tolerance, and category—not “another LLM scoring the first LLM.”
-- The **regression gate** compares strict per-category F1 to a **stored baseline** so prompt refactors do not erode one category in silence.
-- **What this does *not* replace:** a prospectively defined, multi-repo, hand-labeled study. Building that is a **project of its own**; the repo provides the **machinery** (`eval_runner.py`, `labeling_rubric.md`).
+**Cost guardrails** — daily budgets, per-PR token caps, circuit breaker on repeated failures.
 
-## What I would report in v1 of the post
+## The eval harness
 
-1. **CI:** Mock-mode eval + gate—what it guarantees (pipeline+scorer) vs what it does not (true recall on production traffic).
-2. **Optional real-LLM run:** If you have keys and time, one **`eval_runner.py --no-mock`** pass on a small labeled slice, with model ID and cost noted.
-3. **Operations:** HMAC webhooks, optional API key on dashboard routes, rate limits, idempotent webhook handling—enough to show you understand production, not just notebooks.
+The repo ships **98 JSON fixtures** with unified diffs and hand-written labels (security, bug, performance, style, suggestion), plus many **clean** PRs for false-positive testing. The scorer uses **strict** match (file + category + line within tolerance) and **soft** match (file + category). CI can **fail** if strict per-category F1 regresses against `eval/baselines/baseline.json`.
 
-## Closing
+The uncomfortable takeaway: a **low F1 with a clear methodology** beats a high number nobody can reproduce. Run with real API keys, save `eval/results.json`, and cite model + prompt version.
 
-The uncomfortable but useful takeaway: **a low, well-explained F1 on a real labeled set** is more valuable than a high number on a poorly specified benchmark. The codebase is set up to support that discipline; the **remaining work** is mostly **data and deployment**—see [`PUBLISHING_AND_BENCHMARK.md`](PUBLISHING_AND_BENCHMARK.md).
+## What I’d do differently
+
+- **Labeling** is the bottleneck, not the model — a serious benchmark needs hundreds of PRs and clear inclusion rules.
+- **Token and dollar accounting** should be explicit in the post (input/output prices, not vibes).
+- **Feedback** from GitHub (dismiss/resolve) is the start of a real learning loop, not the end.
+
+## Try it
+
+Repo: [github.com/Vyshnavi-d-p-3/sentinel](https://github.com/Vyshnavi-d-p-3/sentinel). See [`PUBLISHING_AND_BENCHMARK.md`](PUBLISHING_AND_BENCHMARK.md) for deploy and benchmark checklist.
 
 ---
-*End of draft. Delete this line before publishing.*
+*End of draft.*

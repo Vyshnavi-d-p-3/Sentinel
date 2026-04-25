@@ -1,0 +1,18 @@
+{
+  "pr_id": "express_pr_5799",
+  "repo": "expressjs/express",
+  "pr_number": 5799,
+  "pr_title": "Auto-labeled example 20 (security)",
+  "is_clean": false,
+  "diff": "diff --git a/lib/auth/compare.js b/lib/auth/compare.js\n--- a/lib/auth/compare.js\n+++ b/lib/auth/compare.js\n@@ -0,0 +1,2 @@\n+export function eq(a,b){ if (a[i] !== b[i]) return false; }\n",
+  "expected_comments": [
+    {
+      "file": "lib/auth/compare.js",
+      "line": 1,
+      "category": "security",
+      "severity": "high",
+      "description": "String comparison for secrets should be constant-time; use timingSafeEqual."
+    }
+  ],
+  "expected_no_comments": []
+}

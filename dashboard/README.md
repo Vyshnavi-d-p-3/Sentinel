@@ -21,7 +21,7 @@ running or the URL is wrong—see [`../docs/TROUBLESHOOTING.md`](../docs/TROUBLE
 - `/` — home: health + KPI tiles + links into each subsection.
 - `/reviews` — paginated list of reviews with filters and a detail drawer.
 - `/reviews/[id]` — single review: summary, comments, pipeline telemetry.
-- `/eval` — eval runs + per-category F1 (disk/DB); numbers may reflect **synthetic+mock** CI or separate **real-LLM** runs—see repo root **Evaluation** and `docs/PUBLISHING_AND_BENCHMARK.md`.
+- `/eval` — eval runs + per-category F1 (disk/DB); default CI uses **98 realistic** fixtures with mock LLM unless you run `--no-mock` offline—see root **Evaluation** and `docs/PUBLISHING_AND_BENCHMARK.md`.
 - `/costs` — daily spend and model/provider mix (reads `/api/v1/costs`).
 - `/prompts` — active prompts + hashes (reads `/api/v1/prompts`).
 - `/feedback` — online agreement-rate stats (reads `/api/v1/feedback/stats`).

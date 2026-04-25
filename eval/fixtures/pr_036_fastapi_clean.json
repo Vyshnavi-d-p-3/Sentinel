@@ -1,0 +1,10 @@
+{
+  "pr_id": "fastapi_pr_20010",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 20010,
+  "pr_title": "Chore: minor cleanup 10",
+  "is_clean": true,
+  "diff": "diff --git a/src/fastapi/clean_010.py b/src/fastapi/clean_010.py\n--- a/src/fastapi/clean_010.py\n+++ b/src/fastapi/clean_010.py\n@@ -1,2 +1,2 @@\n-# Chore: minor cleanup 10\n+# tidied: 10\n pass\n",
+  "expected_comments": [],
+  "expected_no_comments": []
+}

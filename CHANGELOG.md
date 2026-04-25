@@ -6,6 +6,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+- **Eval:** Replaced 100 mock-aligned `synth_pr_*.json` fixtures with 98 realistic `pr_*.json` files from `eval/scripts/generate_realistic_fixtures.py`; `is_clean` supported in fixtures; placeholder `eval/baselines/baseline.json` for CI gate. GitHub client posts inline comments via batch PR Review API with fallback. Added deploy templates (`Procfile`, `fly.toml`, `vercel.json`), `docs/GITHUB_APP_SETUP.md`, and expanded Playwright coverage (`e2e/pages.spec.ts`).
+
 ### 2026-04-24
 
 - **Dev UX:** root `package.json` with `concurrently` — `npm run dev` runs API + dashboard; `package-lock.json` at repo root.
@@ -74,4 +76,4 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 Initial scaffolding: FastAPI backend, Next.js 14 dashboard, hybrid retrieval
 (BM25 + pgvector with RRF fusion), 4-step agentic review pipeline, hand-labeled
-100-PR evaluation harness with per-category P/R/F1 and CI regression gate.
+98-PR (default) evaluation harness with per-category P/R/F1 and CI regression gate.

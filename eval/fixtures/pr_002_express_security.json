@@ -1,0 +1,18 @@
+{
+  "pr_id": "express_pr_5804",
+  "repo": "expressjs/express",
+  "pr_number": 5804,
+  "pr_title": "Add file download endpoint for reports",
+  "is_clean": false,
+  "diff": "diff --git a/lib/routes/reports.js b/lib/routes/reports.js\n--- a/lib/routes/reports.js\n+++ b/lib/routes/reports.js\n@@ -1,5 +1,14 @@\n                 const express = require('express');\n                 const router = express.Router();\n                 +const path = require('path');\n                 +const fs = require('fs');\n                 +\n                 +router.get('/download', (req, res) => {\n                 +  const filename = req.query.file;\n                 +  const filepath = path.join('/var/reports', filename);\n                 +  if (fs.existsSync(filepath)) {\n                 +    res.download(filepath);\n                 +  } else {\n                 +    res.status(404).send('Not found');\n                 +  }\n                 +});\n",
+  "expected_comments": [
+    {
+      "file": "lib/routes/reports.js",
+      "line": 6,
+      "category": "security",
+      "severity": "critical",
+      "description": "Path traversal: user-controlled filename joined to a base path without sanitization; '../' can escape the directory."
+    }
+  ],
+  "expected_no_comments": []
+}

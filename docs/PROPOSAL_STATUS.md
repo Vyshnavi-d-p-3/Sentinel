@@ -32,10 +32,10 @@ Tracking the *Sentinel — Complete Build Document* (PDF) against this repositor
 
 | Area | Spec hint | Status |
 |------|------------|--------|
-| 100-PR dataset | Hand-labeled JSON fixtures | **100 × synthetic** `eval/fixtures/synth_pr_*.json` (mock-aligned CI); **legacy** hand examples under `eval/fixtures/legacy/` |
+| 98-PR dataset | Hand-labeled JSON fixtures | **98 × realistic** `eval/fixtures/pr_*.json` (from `eval/scripts/generate_realistic_fixtures.py`); **legacy** rubric examples under `eval/fixtures/legacy/`; `generate_synthetic_fixtures.py` still available for mock-anchor experiments |
 | Eval gate | F1 drop vs baseline in CI | **Yes** |
 | `GET /eval/compare` | Prompt comparison | **Yes** — backend + dashboard hooks |
-| Playwright | Core E2E | **Expanded** — `dashboard/e2e/routes.spec.ts` + smoke; mocked eval/reviews flows |
+| Playwright | Core E2E | **Expanded** — `dashboard/e2e/routes.spec.ts`, `pages.spec.ts` (mocked API), `smoke.spec.ts` |
 | Locust | ~50 concurrent webhooks | **In-repo** [`loadtests/`](../loadtests/); **workflow** `.github/workflows/loadtest.yml` (`workflow_dispatch`) |
 | Lighthouse | Score targets in PDF | **Advisory** step on dashboard workflow (not a hard gate) |
 | Structured logging / correlation ID | PDF week 7 | **Partial** — request middleware; tune to your ops stack |
@@ -44,7 +44,7 @@ Tracking the *Sentinel — Complete Build Document* (PDF) against this repositor
 
 ## Success metrics (PDF page 12)
 
-Honest reporting beats inflated F1. Targets are **aspirational** until you run a **real** labeled eval (not the default mock-aligned bundle).
+Honest reporting beats inflated F1. Targets are **aspirational** until you run a **real** labeled eval with `--no-mock` and commit a non-placeholder baseline.
 
 | Metric | PDF target | Notes |
 |--------|------------|--------|

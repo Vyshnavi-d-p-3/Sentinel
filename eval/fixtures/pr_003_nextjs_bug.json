@@ -1,0 +1,18 @@
+{
+  "pr_id": "nextjs_pr_58310",
+  "repo": "vercel/next.js",
+  "pr_number": 58310,
+  "pr_title": "Fix middleware redirect status validation",
+  "is_clean": false,
+  "diff": "diff --git a/packages/next/src/server/web/spec-extension/response.ts b/packages/next/src/server/web/spec-extension/response.ts\n--- a/packages/next/src/server/web/spec-extension/response.ts\n+++ b/packages/next/src/server/web/spec-extension/response.ts\n@@ -45,10 +45,10 @@ export class NextResponse extends Response {\n                  static redirect(url: string | URL, status?: number): NextResponse {\n                    const destination = typeof url === 'string' ? new URL(url) : url\n                 -  if (![301, 302, 303, 307, 308].includes(status ?? 307)) {\n                 -    throw new RangeError('redirect status must be a redirect status code')\n                 -  }\n                 -  return new NextResponse(null, {\n                 +  return new NextResponse(null, {\n                    status: status ?? 307,\n                    headers: { Location: destination.toString() },\n                  })\n",
+  "expected_comments": [
+    {
+      "file": "packages/next/src/server/web/spec-extension/response.ts",
+      "line": 48,
+      "category": "bug",
+      "severity": "high",
+      "description": "Removed redirect status code validation; invalid codes can produce malformed HTTP responses."
+    }
+  ],
+  "expected_no_comments": []
+}

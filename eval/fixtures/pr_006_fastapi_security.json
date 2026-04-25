@@ -1,0 +1,18 @@
+{
+  "pr_id": "fastapi_pr_10900",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 10900,
+  "pr_title": "Auto-labeled example 1 (security)",
+  "is_clean": false,
+  "diff": "diff --git a/app/core/secrets.py b/app/core/secrets.py\n--- a/app/core/secrets.py\n+++ b/app/core/secrets.py\n@@ -0,0 +1,2 @@\n+API_KEY = \"hardcoded-secret\"\n+print(API_KEY)\n",
+  "expected_comments": [
+    {
+      "file": "app/core/secrets.py",
+      "line": 1,
+      "category": "security",
+      "severity": "critical",
+      "description": "Hardcoded API key in source; load from the environment or a secret manager."
+    }
+  ],
+  "expected_no_comments": []
+}

@@ -56,12 +56,50 @@ class GithubClient:
         head_sha: str,
         comments: list[ReviewComment],
     ) -> list[int]:
-        """Post per-line review comments and return GitHub comment IDs."""
+        """Post review comments as a single PR review (batch), with per-comment fallback.
+
+        Uses ``POST /repos/{owner}/{repo}/pulls/{pr}/reviews`` to group inline comments
+        into one review; falls back to individual line comments if the batch call fails.
+        """
         posted_ids: list[int] = []
         if not comments:
             return posted_ids
 
+        review_comments = [
+            {
+                "path": c.file_path,
+                "line": c.line_number,
+                "side": "RIGHT",
+                "body": _format_comment_body(c),
+            }
+            for c in comments
+        ]
+        has_issues = any(c.severity.value in {"critical", "high"} for c in comments)
+        review_payload: dict = {
+            "commit_id": head_sha,
+            "event": "REQUEST_CHANGES" if has_issues else "COMMENT",
+            "body": "\n**Sentinel AI Review** — automated findings from the code review pipeline.",
+            "comments": review_comments,
+        }
+        url = f"https://api.github.com/repos/{repo_full_name}/pulls/{pr_number}/reviews"
         async with httpx.AsyncClient(timeout=30.0) as client:
+            try:
+                resp = await client.post(url, headers=self._headers, json=review_payload)
+                resp.raise_for_status()
+                data = resp.json()
+                review_id = data.get("id")
+                if isinstance(review_id, int):
+                    posted_ids.append(review_id)
+                logger.info(
+                    "Posted batch PR review %s with %d comments",
+                    review_id,
+                    len(review_comments),
+                )
+                return posted_ids
+            except Exception as exc:
+                logger.warning(
+                    "Batch PR review failed (%s); falling back to individual comments", exc
+                )
             for comment in comments:
                 payload = {
                     "body": _format_comment_body(comment),
@@ -71,20 +109,19 @@ class GithubClient:
                     "side": "RIGHT",
                 }
                 try:
-                    url = f"https://api.github.com/repos/{repo_full_name}/pulls/{pr_number}/comments"
-                    resp = await client.post(url, headers=self._headers, json=payload)
+                    fallback_url = f"https://api.github.com/repos/{repo_full_name}/pulls/{pr_number}/comments"
+                    resp = await client.post(fallback_url, headers=self._headers, json=payload)
                     resp.raise_for_status()
                     data = resp.json()
                     comment_id = data.get("id")
                     if isinstance(comment_id, int):
                         posted_ids.append(comment_id)
-                except Exception as exc:
-                    # Keep best-effort behavior: one bad anchor should not abort all posts.
+                except Exception as exc2:
                     logger.warning(
                         "Failed posting inline comment path=%s line=%s: %s",
                         comment.file_path,
                         comment.line_number,
-                        exc,
+                        exc2,
                     )
         return posted_ids
 

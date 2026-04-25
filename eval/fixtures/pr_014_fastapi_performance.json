@@ -1,0 +1,18 @@
+{
+  "pr_id": "fastapi_pr_10918",
+  "repo": "tiangolo/fastapi",
+  "pr_number": 10918,
+  "pr_title": "Auto-labeled example 9 (performance)",
+  "is_clean": false,
+  "diff": "diff --git a/app/api/routes/bulk.py b/app/api/routes/bulk.py\n--- a/app/api/routes/bulk.py\n+++ b/app/api/routes/bulk.py\n@@ -4,2 +4,5 @@\n+@router.get(\"/all\")\n+def all_rows(db: Session = Depends(get_db)):\n+    return db.query(Log).all()\n",
+  "expected_comments": [
+    {
+      "file": "app/api/routes/bulk.py",
+      "line": 5,
+      "category": "performance",
+      "severity": "high",
+      "description": "Loads entire table into memory; add pagination or streaming."
+    }
+  ],
+  "expected_no_comments": []
+}

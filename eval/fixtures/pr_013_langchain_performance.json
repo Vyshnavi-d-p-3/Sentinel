@@ -1,0 +1,18 @@
+{
+  "pr_id": "langchain_pr_18417",
+  "repo": "langchain-ai/langchain",
+  "pr_number": 18417,
+  "pr_title": "Auto-labeled example 8 (performance)",
+  "is_clean": false,
+  "diff": "diff --git a/libs/langchain/langchain/chains/qa.py b/libs/langchain/langchain/chains/qa.py\n--- a/libs/langchain/langchain/chains/qa.py\n+++ b/libs/langchain/langchain/chains/qa.py\n@@ -20,2 +20,4 @@\n+    for doc in documents:\n+        results.append(embeddings.embed_query(doc.page_content))\n",
+  "expected_comments": [
+    {
+      "file": "libs/langchain/langchain/chains/qa.py",
+      "line": 22,
+      "category": "performance",
+      "severity": "high",
+      "description": "Per-document embedding in a loop; prefer batch API to reduce N round-trips."
+    }
+  ],
+  "expected_no_comments": []
+}

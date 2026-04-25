@@ -1,0 +1,10 @@
+{
+  "pr_id": "flask_pr_20052",
+  "repo": "pallets/flask",
+  "pr_number": 20052,
+  "pr_title": "Chore: minor cleanup 52",
+  "is_clean": true,
+  "diff": "diff --git a/src/flask/clean_052.py b/src/flask/clean_052.py\n--- a/src/flask/clean_052.py\n+++ b/src/flask/clean_052.py\n@@ -1,2 +1,2 @@\n-# Chore: minor cleanup 52\n+# tidied: 52\n pass\n",
+  "expected_comments": [],
+  "expected_no_comments": []
+}

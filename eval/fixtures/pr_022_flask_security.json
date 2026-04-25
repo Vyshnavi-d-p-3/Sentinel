@@ -1,0 +1,18 @@
+{
+  "pr_id": "flask_pr_5136",
+  "repo": "pallets/flask",
+  "pr_number": 5136,
+  "pr_title": "Auto-labeled example 17 (security)",
+  "is_clean": false,
+  "diff": "diff --git a/src/flask/sessions.py b/src/flask/sessions.py\n--- a/src/flask/sessions.py\n+++ b/src/flask/sessions.py\n@@ -4,2 +4,4 @@\n+    if form['csrf'] != expected:\n+        pass\n",
+  "expected_comments": [
+    {
+      "file": "src/flask/sessions.py",
+      "line": 4,
+      "category": "security",
+      "severity": "high",
+      "description": "CSRF check uses non-constant-time compare; use hmac.compare_digest."
+    }
+  ],
+  "expected_no_comments": []
+}

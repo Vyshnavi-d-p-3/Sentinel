@@ -1,0 +1,18 @@
+{
+  "pr_id": "express_pr_5809",
+  "repo": "expressjs/express",
+  "pr_number": 5809,
+  "pr_title": "Auto-labeled example 10 (bug)",
+  "is_clean": false,
+  "diff": "diff --git a/lib/middleware/parse.js b/lib/middleware/parse.js\n--- a/lib/middleware/parse.js\n+++ b/lib/middleware/parse.js\n@@ -1,2 +1,4 @@\n+const body = JSON.parse(req.body)\n+// ...\n",
+  "expected_comments": [
+    {
+      "file": "lib/middleware/parse.js",
+      "line": 2,
+      "category": "bug",
+      "severity": "high",
+      "description": "JSON.parse on raw body can throw; wrap in try/catch and return 400 on error."
+    }
+  ],
+  "expected_no_comments": []
+}
