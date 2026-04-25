@@ -381,6 +381,31 @@ export interface ReviewPreviewOutput {
   model_version?: string;
 }
 
+// ---- Test generation preview ---------------------------------------------
+
+export interface GeneratedTestOut {
+  comment_title: string;
+  file_path: string;
+  test_file_path: string;
+  framework: string;
+  test_code: string;
+  test_name: string;
+  description: string;
+  category: Category | string;
+  setup_notes: string;
+  confidence: number;
+}
+
+export interface TestGenerationOutput {
+  tests: GeneratedTestOut[];
+  total_eligible: number;
+  total_generated: number;
+  skipped_reasons: string[];
+  tokens_used?: number;
+  latency_ms?: number;
+  model?: string;
+}
+
 // ---- Health --------------------------------------------------------------
 
 export interface HealthResponse {

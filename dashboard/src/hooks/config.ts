@@ -2,7 +2,12 @@
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiFetch } from "@/lib/api";
-import type { ConfigResponse, ReviewPreviewOutput } from "@/lib/types";
+import type {
+  ConfigResponse,
+  ReviewCommentOut,
+  ReviewPreviewOutput,
+  TestGenerationOutput,
+} from "@/lib/types";
 
 export function useConfig() {
   return useQuery<ConfigResponse>({
@@ -28,6 +33,26 @@ export function useReviewPreview() {
           pr_number: body.pr_number ?? 0,
           pr_title: body.pr_title,
           diff: body.diff,
+        }),
+      }),
+  });
+}
+
+export interface GenerateTestsInput {
+  pr_title: string;
+  diff: string;
+  comments: ReviewCommentOut[];
+}
+
+export function useGenerateTests() {
+  return useMutation<TestGenerationOutput, Error, GenerateTestsInput>({
+    mutationFn: (body) =>
+      apiFetch<TestGenerationOutput>("/api/v1/tests/generate", {
+        method: "POST",
+        body: JSON.stringify({
+          pr_title: body.pr_title,
+          diff: body.diff,
+          comments: body.comments,
         }),
       }),
   });
