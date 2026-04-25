@@ -49,7 +49,7 @@ async def _fetch_diff(diff_url: str, token: str | None) -> str:
     }
     if token:
         headers["Authorization"] = f"Bearer {token}"
-    async with httpx.AsyncClient(timeout=30.0) as client:
+    async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
         resp = await client.get(diff_url, headers=headers)
         resp.raise_for_status()
     return resp.text
