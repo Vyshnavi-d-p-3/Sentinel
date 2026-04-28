@@ -1,0 +1,5 @@
+- Follow existing code patterns in this repo
+- Use Pydantic v2 for all data models
+- All async endpoints must have error handling
+- Tests go in backend/tests/unit/ with test_ prefix
+- Commit messages follow conventional commits (feat/fix/docs/chore)
