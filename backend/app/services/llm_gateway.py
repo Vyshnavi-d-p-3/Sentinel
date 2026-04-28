@@ -32,6 +32,9 @@ from app.services.mock_label_anchor import category_severity_for_anchor
 logger = logging.getLogger(__name__)
 T = TypeVar("T", bound=BaseModel)
 
+# PERF: Claude Sonnet avg 2.3s per call in prod. Considered batching
+# multiple files but the structured output schema gets confused.
+# Revisit if latency becomes a bottleneck.
 
 class LLMGatewayError(Exception):
     """Raised when all LLM providers fail after retries."""

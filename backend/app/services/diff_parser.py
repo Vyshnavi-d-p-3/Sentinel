@@ -63,6 +63,8 @@ class DiffParser:
     """
 
     CONTEXT_LINES = 10
+    # TODO(vyshnavi): Handle git rename detection (--follow). Currently
+    # treats renames as delete + create, missing cross-file analysis.
     HUNK_HEADER = re.compile(r"^@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@(.*)$")
     FUNCTION_PATTERNS = {
         ".py": re.compile(r"^\s*(def|class)\s+(\w+)"),

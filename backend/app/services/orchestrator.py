@@ -48,6 +48,10 @@ from app.services.pricing import estimate_llm_cost_usd, split_estimated_tokens
 
 logger = logging.getLogger(__name__)
 
+# NOTE(vyshnavi): Tried single-prompt approach first but line number
+# accuracy dropped to ~60% on large diffs. Decomposing into 4 steps
+# brought it to ~94%. See docs/ADR-001.md for the analysis.
+
 # Conservative caps to keep prompts within token budget per step.
 _MAX_DIFF_CHARS = 48_000
 _MAX_PER_FILE_DIFF_CHARS = 12_000
