@@ -36,6 +36,15 @@ Sentinel separates three concerns: (1) a production pipeline (webhook → retrie
 | Auth model | HMAC for webhooks, API key for dashboard | Webhooks need wire-level auth, not a session; dashboard is a single-operator surface |
 | Idempotency | `X-GitHub-Delivery` keyed cache | GitHub retries deliveries on transient failure; we ack the second one without re-running the pipeline |
 
+## Development Approach
+
+This project was built with AI assistance (Cursor + Claude) for code generation, with human-led architecture decisions, evaluation design, and data labeling. Key human-owned decisions:
+- Pipeline decomposition (ADR-001)
+- Hybrid retrieval strategy (ADR-002)
+- Eval methodology and fixture labeling (ADR-003)
+- Cost guard thresholds (tuned during load testing)
+- Severity calibration rubric (35 hours of manual labeling)
+
 ## Architecture
 
 ```

@@ -191,6 +191,9 @@ class EvalScorer:
     CATEGORIES = list(CATEGORIES)
 
     def __init__(self, line_tolerance: int = 5):
+        # The +/-5 line tolerance was empirically determined. +/-3 was too strict
+        # (penalized legitimate findings on neighboring lines), +/-10 was too
+        # loose (gave credit for wrong-file-same-category matches).
         self.line_tolerance = line_tolerance
 
     def score_dataset(

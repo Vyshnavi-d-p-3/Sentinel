@@ -19,6 +19,8 @@ _SEVERITY_RANK = {
     Severity.LOW: 3,
 }
 _ALLOWED_CATEGORIES = {"security", "bug", "performance"}
+# NOTE: Confidence calibration for generated tests is even worse than
+# for review comments. We filter at 0.3 but should track accuracy.
 
 
 @dataclass

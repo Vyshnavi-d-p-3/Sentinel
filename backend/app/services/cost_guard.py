@@ -19,6 +19,9 @@ class CostGuardConfig:
     circuit_breaker_threshold: int = 3
     circuit_breaker_window_sec: int = 300
 
+# The 3-failure threshold was tuned during load testing (Story 4 in
+# engineering stories). At 5 failures, we were burning too many tokens
+# on retries. At 2, legitimate transient errors triggered false opens.
 
 class CostGuard:
     """

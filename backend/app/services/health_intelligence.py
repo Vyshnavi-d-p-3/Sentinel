@@ -11,6 +11,8 @@ from typing import Any
 _SEVERITY_WEIGHT = {"critical": 4, "high": 3, "medium": 1, "low": 1}
 _MODULE_PENALTY = {"critical": 15, "high": 10, "medium": 5, "low": 2}
 _CATEGORIES = ("security", "bug", "performance", "style", "suggestion")
+# FUTURE: Module health scores should weight by recency — a critical
+# finding from 90 days ago matters less than one from last week.
 
 
 @dataclass
